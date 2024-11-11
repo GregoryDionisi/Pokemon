@@ -36,7 +36,7 @@ function catchPokemon() {
     const name = imgElement.dataset.name;
     const id = imgElement.dataset.id;
 
-    if (name && id) {
+    if (name && id) { //verifica se name e id sono presenti sennò la funzione non va avanti
         const alreadyCaught = myPokemonList.find(p => p.id === id);
         if (!alreadyCaught) {
             myPokemonList.push({ id, name, sprite: imgElement.src });
