@@ -11,7 +11,9 @@ async function fetchRandomPokemon() {
     const randomId = Math.floor(Math.random() * 150) + 1;
     try {
         const response = await fetch(`${API_URL}${randomId}`);
-        if (!response.ok) throw new Error('Failed to fetch Pokémon');
+        if (!response.ok) {
+            throw new Error('Failed to fetch Pokémon');
+        }
         const data = await response.json();
         displayPokemon(data);
     } catch (error) {
@@ -34,10 +36,13 @@ function catchPokemon() {
     const name = imgElement.dataset.name;
     const id = imgElement.dataset.id;
 
-    if (name && id && !myPokemonList.find(p => p.id === id)) {
-        myPokemonList.push({ id, name, sprite: imgElement.src });
-        localStorage.setItem('myPokemon', JSON.stringify(myPokemonList));
-        renderMyPokemon();
+    if (name && id) {
+        const alreadyCaught = myPokemonList.find(p => p.id === id);
+        if (!alreadyCaught) {
+            myPokemonList.push({ id, name, sprite: imgElement.src });
+            localStorage.setItem('myPokemon', JSON.stringify(myPokemonList));
+            renderMyPokemon();
+        }
     }
 }
 
@@ -63,7 +68,9 @@ function renderMyPokemon() {
 async function showDetails(id) {
     try {
         const response = await fetch(`${API_URL}${id}`);
-        if (!response.ok) throw new Error('Failed to fetch Pokémon details');
+        if (!response.ok) {
+            throw new Error('Failed to fetch Pokémon details');
+        }
         const data = await response.json();
         displayDetails(data);
     } catch (error) {
