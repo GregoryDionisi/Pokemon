@@ -8,34 +8,30 @@
 
     <title>Document</title>
 </head>
-<body>
-    <body class="bg-gray-100 flex items-center justify-center min-h-screen">
-        <div id="app" class="grid grid-cols-3 gap-4 p-8 bg-white rounded-lg shadow-lg">
-
-            <div class="pokedex bg-base-100 p-4 rounded-lg shadow">
-                <h2 class="text-xl font-bold mb-4">My Pokémon</h2>
-                <div id="myPokemonList" class="space-y-4"></div>
-            </div>
-            
-
-            <div class="catch-area flex flex-col items-center bg-base-100 p-4 rounded-lg shadow">
-                <h2 class="text-2xl font-bold mb-4">Catch a Pokémon!</h2>
-                <div class="bg-cover bg-center p-4 rounded-lg" id="pokemonDisplay">
-                    <img src="" alt="Pokémon" id="pokemonSprite" class="w-32 h-32" style="display: none;">
-                </div>
-                <button id="catchButton" class="btn btn-success mt-4">Catch</button>
-            </div>
-  
-
-            <div class="pokemon-details bg-base-100 p-4 rounded-lg shadow">
-                <h2 class="text-xl font-bold mb-4">Pokémon Details</h2>
-                <div id="details"></div>
-            </div>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div id="app" class="grid grid-cols-3 gap-4 p-8 bg-white rounded-lg shadow-lg">
+        <!-- Pokédex (Sezione sinistra) -->
+        <div class="pokedex bg-base-100 p-4 rounded-lg shadow">
+            <h2 class="text-xl font-bold mb-4">My Pokémon</h2>
+            <div id="myPokemonList" class="space-y-4"></div>
         </div>
-    
-        <script src="script.js"></script>
-    </body>
-    </html>
-    
+        
+        <!-- Schermata centrale per catturare Pokémon -->
+        <div class="catch-area flex flex-col items-center bg-base-100 p-4 rounded-lg shadow">
+            <h2 class="text-2xl font-bold mb-4">Catch a Pokémon!</h2>
+            <div class="bg-cover bg-center p-4 rounded-lg" id="pokemonDisplay">
+                <img src="" alt="Pokémon" id="pokemonSprite" class="w-32 h-32" style="display: none;">
+            </div>
+            <button id="catchButton" class="btn btn-success mt-4">Catch</button>
+        </div>
+
+        <!-- Sezione dettagli (Sezione destra) -->
+        <div class="pokemon-details bg-base-100 p-4 rounded-lg shadow">
+            <h2 class="text-xl font-bold mb-4">Pokémon Details</h2>
+            <div id="details"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
