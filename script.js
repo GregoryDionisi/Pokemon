@@ -78,7 +78,7 @@ async function showDetails(id) {
     }
 }
 
-function displayDetails(pokemon) {
+function displayDetails(pokemon) { //join unisce gli elementi dell'array ottenuto da map per creare una signola stringa separata da ,
     detailsDiv.innerHTML = `
         <div class="card bg-base-100 shadow-lg p-4">
             <h3 class="text-lg font-bold">${pokemon.name}</h3>
