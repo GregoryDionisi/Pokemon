@@ -29,11 +29,17 @@
                         shadow-lg shadow-black/10 text-white/80 
                         hover:bg-neutral-900/70 hover:border-yellow-500/50 hover:shadow-yellow-500/20
                         transition-all duration-300">
-                <img id="catImage"
-                    src="/api/placeholder/400/300"
-                    alt="Cat" 
-                    class="w-full h-full object-cover rounded-lg animate-fade-in hidden"
-                />
+                        0
+                        <div class="bg-cover bg-center p-4 rounded-lg" id="pokemonDisplay" style="width: 100%; height: 80%;">
+                            <img src="" alt="Pokémon" id="pokemonSprite" class="m-auto w-full h-full object-contain" style="display: none;">
+                        </div>
+                        <div id="pokemon-info" class="flex justify-center items-center space-x-4">
+                            <h2 id="pokemonName" class="text-xl font-bold"></h2>
+                            <div class="pokemon-type">
+                                <img id="pokemonTypeIcon" src="" alt="Tipo Pokémon" class="w-8 h-8">
+                            </div>
+                        </div>                        
+                        
             </div>
 
             <!-- Item 1 - Left Side -->
@@ -42,7 +48,7 @@
                         shadow-lg shadow-black/10 text-white/80 text-xl
                         hover:bg-neutral-900/70 hover:border-yellow-500/50 hover:shadow-yellow-500/20
                         transition-all duration-300">
-                1
+                <div id="myPokemonList" class="space-y-4 overflow-y-auto max-h-full"></div> <!--overflow auto aggiunge la scrollbar solo se necessaria e max h è l'altezza massima del div-->
             </div>
 
             <!-- Item 2 - Right Side -->
@@ -52,6 +58,8 @@
                         hover:bg-neutral-900/70 hover:border-yellow-500/50 hover:shadow-yellow-500/20
                         transition-all duration-300">
                 2
+                <h2 class="text-xl font-bold mb-4">Pokémon Details</h2>
+                <div id="details"></div>
             </div>
 
             <!-- Item 3 - Bottom Center -->
@@ -61,22 +69,7 @@
                         hover:bg-neutral-900/70 hover:border-yellow-500/50 hover:shadow-yellow-500/20
                         transition-all duration-300
                         flex flex-col gap-2">
-                <button 
-                    onclick="document.getElementById('catImage').classList.remove('hidden')"
-                    class="bg-white/10 border border-white/10 px-5 py-2.5 rounded-lg text-white
-                           backdrop-blur-lg cursor-pointer transition-all duration-300
-                           hover:bg-white/20 hover:border-yellow-500/30 hover:-translate-y-0.5
-                           active:translate-y-0">
-                    Show Cat
-                </button>
-                <button 
-                    onclick="document.getElementById('catImage').classList.add('hidden')"
-                    class="bg-white/10 border border-white/10 px-5 py-2.5 rounded-lg text-white
-                           backdrop-blur-lg cursor-pointer transition-all duration-300
-                           hover:bg-white/20 hover:border-yellow-500/30 hover:-translate-y-0.5
-                           active:translate-y-0">
-                    Hide Cat
-                </button>
+                        <button id="catchButton" class="btn btn-success mt-4">Catch</button>
             </div>
 
             <!-- Item 4 - Bottom Left -->
@@ -99,4 +92,5 @@
         </div>
     </div>
 </body>
+<script type="text/javascript" src="script.js"></script>
 </html>
