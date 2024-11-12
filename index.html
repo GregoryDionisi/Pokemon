@@ -3,35 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Glass Grid</title>
+    
+<link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
+<script src="https://cdn.tailwindcss.com"></script>
 
-    <title>Document</title>
+
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+    </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-    <div id="app" class="grid grid-cols-3 gap-4 p-8 bg-white rounded-lg shadow-lg">
-        <!-- Pokédex (Sezione sinistra) -->
-        <div class="pokedex bg-base-100 p-4 rounded-lg shadow">
-            <h2 class="text-xl font-bold mb-4">My Pokémon</h2>
-            <div id="myPokemonList" class="space-y-4"></div>
-        </div>
-        
-        <!-- Schermata centrale per catturare Pokémon -->
-        <div class="catch-area flex flex-col items-center bg-base-100 p-4 rounded-lg shadow">
-            <h2 class="text-2xl font-bold mb-4">Catch a Pokémon!</h2>
-            <div class="bg-cover bg-center p-4 rounded-lg" id="pokemonDisplay">
-                <img src="" alt="Pokémon" id="pokemonSprite" class="w-32 h-32" style="display: none;">
+<body>
+    <div class="min-h-screen p-2.5 bg-gradient-to-tr from-neutral-900 via-neutral-800 to-neutral-700">
+        <!-- Grid Container -->
+        <div class="grid grid-cols-4 md:grid-cols-8 grid-rows-4 md:grid-rows-5 gap-3 h-screen p-2.5 backdrop-blur-lg">
+            <!-- Item 0 - Center Main -->
+            <div class="col-span-2 md:col-span-4 row-span-3 md:col-start-3 md:row-start-1 
+                        bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-5
+                        shadow-lg shadow-black/10 text-white/80 
+                        hover:bg-neutral-900/70 hover:border-yellow-500/50 hover:shadow-yellow-500/20
+                        transition-all duration-300">
+                <img id="catImage"
+                    src="/api/placeholder/400/300"
+                    alt="Cat" 
+                    class="w-full h-full object-cover rounded-lg animate-fade-in hidden"
+                />
             </div>
-            <button id="catchButton" class="btn btn-success mt-4">Catch</button>
-        </div>
 
-        <!-- Sezione dettagli (Sezione destra) -->
-        <div class="pokemon-details bg-base-100 p-4 rounded-lg shadow">
-            <h2 class="text-xl font-bold mb-4">Pokémon Details</h2>
-            <div id="details"></div>
+            <!-- Item 1 - Left Side -->
+            <div class="col-span-1 md:col-span-2 row-span-3 md:row-span-4 md:col-start-1 md:row-start-1
+                        bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-5
+                        shadow-lg shadow-black/10 text-white/80 text-xl
+                        hover:bg-neutral-900/70 hover:border-yellow-500/50 hover:shadow-yellow-500/20
+                        transition-all duration-300">
+                1
+            </div>
+
+            <!-- Item 2 - Right Side -->
+            <div class="col-span-1 md:col-span-2 row-span-3 md:row-span-4 md:col-start-7 md:row-start-1
+                        bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-5
+                        shadow-lg shadow-black/10 text-white/80 text-xl
+                        hover:bg-neutral-900/70 hover:border-yellow-500/50 hover:shadow-yellow-500/20
+                        transition-all duration-300">
+                2
+            </div>
+
+            <!-- Item 3 - Bottom Center -->
+            <div class="col-span-2 md:col-span-4 row-span-1 md:row-span-2 md:col-start-3 md:row-start-4
+                        bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-5
+                        shadow-lg shadow-black/10 text-white/80 
+                        hover:bg-neutral-900/70 hover:border-yellow-500/50 hover:shadow-yellow-500/20
+                        transition-all duration-300
+                        flex flex-col gap-2">
+                <button 
+                    onclick="document.getElementById('catImage').classList.remove('hidden')"
+                    class="bg-white/10 border border-white/10 px-5 py-2.5 rounded-lg text-white
+                           backdrop-blur-lg cursor-pointer transition-all duration-300
+                           hover:bg-white/20 hover:border-yellow-500/30 hover:-translate-y-0.5
+                           active:translate-y-0">
+                    Show Cat
+                </button>
+                <button 
+                    onclick="document.getElementById('catImage').classList.add('hidden')"
+                    class="bg-white/10 border border-white/10 px-5 py-2.5 rounded-lg text-white
+                           backdrop-blur-lg cursor-pointer transition-all duration-300
+                           hover:bg-white/20 hover:border-yellow-500/30 hover:-translate-y-0.5
+                           active:translate-y-0">
+                    Hide Cat
+                </button>
+            </div>
+
+            <!-- Item 4 - Bottom Left -->
+            <div class="col-span-1 md:col-span-2 row-span-1 md:col-start-1 md:row-start-5
+                        bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-5
+                        shadow-lg shadow-black/10 text-white/80 text-xl
+                        hover:bg-neutral-900/70 hover:border-yellow-500/50 hover:shadow-yellow-500/20
+                        transition-all duration-300">
+                4
+            </div>
+
+            <!-- Item 5 - Bottom Right -->
+            <div class="col-span-1 md:col-span-2 row-span-1 md:col-start-7 md:row-start-5
+                        bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-5
+                        shadow-lg shadow-black/10 text-white/80 text-xl
+                        hover:bg-neutral-900/70 hover:border-yellow-500/50 hover:shadow-yellow-500/20
+                        transition-all duration-300">
+                5
+            </div>
         </div>
     </div>
-
-    <script src="script.js"></script>
 </body>
 </html>
