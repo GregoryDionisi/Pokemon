@@ -17,6 +17,7 @@
         .animate-fade-in {
             animation: fadeIn 0.5s ease;
         }
+        
     </style>
 </head>
 <body>
@@ -79,6 +80,17 @@
                         hover:bg-neutral-900/70 hover:border-yellow-500/50 hover:shadow-yellow-500/20
                         transition-all duration-300">
                 4
+                
+                <div id="section-4" class="mt-4">
+                    <button id="removeAllButton" 
+                        class="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition">
+                        Elimina tutti
+                    </button>
+                    <button id="sortButton" 
+                        class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition">
+                        Ordina alfabeticamente
+                    </button>
+                </div>
             </div>
 
             <!-- Item 5 - Bottom Right -->
@@ -88,6 +100,16 @@
                         hover:bg-neutral-900/70 hover:border-yellow-500/50 hover:shadow-yellow-500/20
                         transition-all duration-300">
                 5
+                <div id="section-5" class="mt-4 flex justify-between items-center">
+                    <button id="previousButton" 
+                        class="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition">
+                        Precedente
+                    </button>
+                    <button id="nextButton" 
+                        class="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition">
+                        Successivo
+                    </button>
+                </div>
             </div>
         </div>
     </div>

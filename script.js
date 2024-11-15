@@ -3,6 +3,7 @@ const myPokemonList = JSON.parse(localStorage.getItem('myPokemon')) || [];
 const pokemonDisplay = document.getElementById('pokemonDisplay');
 const myPokemonDiv = document.getElementById('myPokemonList');
 const detailsDiv = document.getElementById('details');
+const cardsPerPage = 6;
 
 document.getElementById('catchButton').addEventListener('click', catchPokemon);
 
@@ -30,10 +31,10 @@ function displayPokemon(pokemon) {
     imgElement.style.display = 'block';
 
     const nameElement = document.getElementById('pokemonName');
-    nameElement.textContent = pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1); // Capitalizza la prima lettera e slice restituisce la parte di nome dopo la prima lettera
+    nameElement.textContent = pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
 
     const typeIconElement = document.getElementById('pokemonTypeIcon');
-    typeIconElement.src = `path_to_icons/${pokemon.types[0].type.name}.png`; // Assicurati di avere le icone corrispondenti nel percorso indicato
+    typeIconElement.src = `path_to_icons/${pokemon.types[0].type.name}.png`;
 
     currentPokemon = {
         name: pokemon.name,
@@ -42,41 +43,93 @@ function displayPokemon(pokemon) {
     };
 }
 
-
 // Funzione per catturare il Pokémon
 function catchPokemon() {
     const name = currentPokemon.name;
     const id = currentPokemon.id;
 
-    if (name && id) { // Verifica se name e id sono presenti
+    if (name && id) {
         const alreadyCaught = myPokemonList.find(p => p.id === id);
         if (!alreadyCaught) {
             myPokemonList.push({ id, name, sprite: document.getElementById('pokemonSprite').src });
             localStorage.setItem('myPokemon', JSON.stringify(myPokemonList));
-            renderMyPokemon();
+            renderPaginatedPokemon(0);  // Rendi visibile la prima pagina dopo aver catturato
         }
     }
+
+    fetchRandomPokemon();
 }
 
-// Mostra i Pokémon catturati nel Pokédex
-function renderMyPokemon() {
+// Mostra i Pokémon catturati nel Pokédex con la paginazione
+let currentPage = 0;
+
+function renderPaginatedPokemon(page) {
+    currentPage = page;
+    const startIndex = page * cardsPerPage;
+    const paginatedPokemon = myPokemonList.slice(startIndex, startIndex + cardsPerPage);
+
     myPokemonDiv.innerHTML = '';
-    myPokemonList.forEach(pokemon => {
+    paginatedPokemon.forEach(pokemon => {
         const pokemonCard = document.createElement('div');
-        pokemonCard.classList.add('card', 'bg-base-200', 'shadow-md', 'p-4', 'rounded-lg');
+        pokemonCard.classList.add(
+            'bg-opacity-50',
+            'bg-gradient-to-br',
+            'from-gray-700',
+            'to-gray-900',
+            'backdrop-blur-lg',
+            'shadow-xl',
+            'rounded-2xl',
+            'w-48',
+            'h-56',
+            'flex',
+            'flex-col',
+            'items-center',
+            'justify-between',
+            'p-4',
+            'm-4'
+        );
+
         pokemonCard.innerHTML = `
-            <img src="${pokemon.sprite}" alt="${pokemon.name}" class="w-16 h-16">
-            <div class="mt-2">
-                <p class="font-bold">${pokemon.name}</p>
-                <button onclick="showDetails(${pokemon.id})" class="btn btn-info btn-xs mt-2">Details</button>
-                <button onclick="removePokemon(${pokemon.id})" class="btn btn-error btn-xs mt-2">Remove</button>
+            <img src="${pokemon.sprite}" alt="${pokemon.name}" class="w-24 h-24 object-contain mt-2">
+            <p class="text-center text-lg font-semibold text-white capitalize">${pokemon.name}</p>
+            <div class="flex gap-2 mt-2">
+                <button onclick="showDetails(${pokemon.id})" 
+                    class="bg-green-500 text-white text-sm font-bold py-1 px-3 rounded-lg hover:bg-green-600 transition">
+                    Details
+                </button>
+                <button onclick="removePokemon(${pokemon.id})" 
+                    class="bg-red-500 text-white text-sm font-bold py-1 px-3 rounded-lg hover:bg-red-600 transition">
+                    Remove
+                </button>
             </div>
         `;
         myPokemonDiv.appendChild(pokemonCard);
     });
+
+    updatePaginationButtons();
 }
 
-// Mostra i dettagli del Pokémon selezionato
+// Funzione per aggiornare lo stato dei bottoni di navigazione
+function updatePaginationButtons() {
+    const previousButton = document.getElementById('previousButton');
+    const nextButton = document.getElementById('nextButton');
+
+    previousButton.disabled = currentPage === 0;
+    nextButton.disabled = currentPage >= Math.ceil(myPokemonList.length / cardsPerPage) - 1;
+}
+
+// Navigazione tra le pagine
+document.getElementById('previousButton').addEventListener('click', () => {
+    if (currentPage > 0) renderPaginatedPokemon(currentPage - 1);
+});
+
+document.getElementById('nextButton').addEventListener('click', () => {
+    if (currentPage < Math.ceil(myPokemonList.length / cardsPerPage) - 1) {
+        renderPaginatedPokemon(currentPage + 1);
+    }
+});
+
+// Funzione per mostrare i dettagli del Pokémon selezionato
 async function showDetails(id) {
     try {
         const response = await fetch(`${API_URL}${id}`);
@@ -90,7 +143,7 @@ async function showDetails(id) {
     }
 }
 
-function displayDetails(pokemon) { //join unisce gli elementi dell'array ottenuto da map per creare una signola stringa separata da ,
+function displayDetails(pokemon) {
     detailsDiv.innerHTML = `
         <div class="card bg-base-100 shadow-lg p-4">
             <h3 class="text-lg font-bold">${pokemon.name}</h3>
@@ -109,10 +162,30 @@ function removePokemon(id) {
     if (index > -1) {
         myPokemonList.splice(index, 1);
         localStorage.setItem('myPokemon', JSON.stringify(myPokemonList));
-        renderMyPokemon();
-    }
+        renderPaginatedPokemon(currentPage);
 }
+}
+
+// Funzione per eliminare tutti i Pokémon
+function removeAllPokemon() {
+    myPokemonList.length = 0;
+    localStorage.setItem('myPokemon', JSON.stringify(myPokemonList));
+    renderPaginatedPokemon(0);
+}
+
+// Funzione per ordinare i Pokémon alfabeticamente
+function sortPokemonAlphabetically() {
+    myPokemonList.sort((a, b) => a.name.localeCompare(b.name));
+    localStorage.setItem('myPokemon', JSON.stringify(myPokemonList));
+    renderPaginatedPokemon(0);
+}
+
+// Aggiunta dei bottoni extra alla UI
+document.getElementById('removeAllButton').addEventListener('click', removeAllPokemon);
+document.getElementById('sortButton').addEventListener('click', sortPokemonAlphabetically);
+
+// Mostra la pagina iniziale del Pokédex
+renderPaginatedPokemon(0);
 
 // Carica un Pokémon casuale all'inizio
 fetchRandomPokemon();
-renderMyPokemon();
