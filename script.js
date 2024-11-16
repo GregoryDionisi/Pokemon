@@ -3,7 +3,7 @@ const myPokemonList = JSON.parse(localStorage.getItem('myPokemon')) || [];
 const pokemonDisplay = document.getElementById('pokemonDisplay');
 const myPokemonDiv = document.getElementById('myPokemonList');
 const detailsDiv = document.getElementById('details');
-const cardsPerPage = 6;
+//rimozione di cardsPerPage
 let currentDetailIndex = 0;
 
 document.getElementById('catchButton').addEventListener('click', catchPokemon);
@@ -60,52 +60,6 @@ function catchPokemon() {
 
 let currentPage = 0;
 
-function renderPaginatedPokemon(page) {
-    currentPage = page;
-    const startIndex = page * cardsPerPage;
-    const paginatedPokemon = myPokemonList.slice(startIndex, startIndex + cardsPerPage);
-
-    myPokemonDiv.innerHTML = '';
-    paginatedPokemon.forEach(pokemon => {
-        const pokemonCard = document.createElement('div');
-        pokemonCard.classList.add(
-            'bg-opacity-50',
-            'bg-gradient-to-br',
-            'from-gray-700',
-            'to-gray-900',
-            'backdrop-blur-lg',
-            'shadow-xl',
-            'rounded-2xl',
-            'w-48',
-            'h-56',
-            'flex',
-            'flex-col',
-            'items-center',
-            'justify-between',
-            'p-4',
-            'm-4'
-        );
-
-        pokemonCard.innerHTML = `
-            <img src="${pokemon.sprite}" alt="${pokemon.name}" class="w-24 h-24 object-contain mt-2">
-            <p class="text-center text-lg font-semibold text-white capitalize">${pokemon.name}</p>
-            <div class="flex gap-2 mt-2">
-                <button onclick="showDetails(${pokemon.id})" 
-                    class="bg-green-500 text-white text-sm font-bold py-1 px-3 rounded-lg hover:bg-green-600 transition">
-                    Details
-                </button>
-                <button onclick="removePokemon(${pokemon.id})" 
-                    class="bg-red-500 text-white text-sm font-bold py-1 px-3 rounded-lg hover:bg-red-600 transition">
-                    Remove
-                </button>
-            </div>
-        `;
-        myPokemonDiv.appendChild(pokemonCard);
-    });
-
-    updatePaginationButtons();
-}
-
 function updatePaginationButtons() {
     const previousButton = document.getElementById('previousButton');
     const nextButton = document.getElementById('nextButton');
@@ -157,22 +111,6 @@ function showPreviousPokemon() {
 document.getElementById('previousButton').addEventListener('click', showPreviousPokemon);
 document.getElementById('nextButton').addEventListener('click', showNextPokemon);
 
-function displayDetails(pokemon) {
-    detailsDiv.innerHTML = `
-        <div class="card bg-base-100 shadow-lg p-4">
-            <div class="flex justify-between items-center mb-4">
-                <span class="text-sm text-gray-500">Pokemon ${currentDetailIndex + 1} of ${myPokemonList.length}</span>
-            </div>
-            <h3 class="text-lg font-bold capitalize">${pokemon.name}</h3>
-            <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}" class="w-20 h-20 my-4">
-            <p>Type: ${pokemon.types.map(type => type.type.name).join(', ')}</p>
-            <p>Abilities: ${pokemon.abilities.map(ability => ability.ability.name).join(', ')}</p>
-            <ul class="mt-4">
-                ${pokemon.stats.map(stat => `<li>${stat.stat.name}: ${stat.base_stat}</li>`).join('')}
-            </ul>
-        </div>
-    `;
-}
 
 function removePokemon(id) {
     const index = myPokemonList.findIndex(p => p.id === id);
@@ -237,7 +175,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 
-function displayDetails(pokemon) {
+function displayDetails(pokemon) {   //OPZIONE 1 PER LA VISUALIZZAZIONE DEI DETTAGLI
     detailsDiv.innerHTML = `
         <div class="card bg-gradient-to-br from-gray-800 to-gray-900 shadow-xl p-6 rounded-xl border border-gray-700 
                     transform transition-all duration-300 hover:scale-[1.02]">
@@ -306,8 +244,8 @@ function displayDetails(pokemon) {
 
 function renderPaginatedPokemon(page) {
     currentPage = page;
-    const startIndex = page * cardsPerPage;
-    const paginatedPokemon = myPokemonList.slice(startIndex, startIndex + cardsPerPage);
+    //Non c'è più un limite di carte per pagina, quindi mostriamo tutti i Pokémon
+    const paginatedPokemon = myPokemonList; //Viene usato direttamente tutta la lista dei pokemon senza suddividerli in pagine
 
     myPokemonDiv.innerHTML = '';
     paginatedPokemon.forEach((pokemon, index) => {
@@ -373,6 +311,7 @@ function renderPaginatedPokemon(page) {
     updatePaginationButtons();
 }
 
+
 // Aggiorna lo stile dei bottoni di navigazione
 function updatePaginationButtons() {
     const previousButton = document.getElementById('previousButton');
@@ -413,7 +352,10 @@ document.getElementById('sortButton').className =
 // Aggiorna lo stile del bottone Catch
 document.getElementById('catchButton').className = 
     'btn bg-gradient-to-r from-blue-500 to-blue-600 text-white border-none hover:from-blue-600 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-blue-500/20';
-    function displayDetails(pokemon) {
+
+
+
+function displayDetails(pokemon) {   //OPZIONE 2 PER LA VISUALIZZAZIONE DEI DETTAGLI
         detailsDiv.innerHTML = `
             <div class="space-y-4">
                 <div class="flex justify-between items-center">
