@@ -2,7 +2,6 @@ const API_URL = 'https://pokeapi.co/api/v2/pokemon/';
 const myPokemonList = JSON.parse(localStorage.getItem('myPokemon')) || [];
 const pokemonDisplay = document.getElementById('pokemonDisplay');
 const myPokemonDiv = document.getElementById('myPokemonList');
-const pokemonTypeIcon = document.getElementById('pokemonTypeIcon');
 const detailsDiv = document.getElementById('details');
 //rimozione di cardsPerPage
 let currentDetailIndex = 0;
@@ -33,15 +32,44 @@ function displayPokemon(pokemon) {
     const nameElement = document.getElementById('pokemonName');
     nameElement.textContent = pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
 
-    const typeIconElement = document.getElementById('pokemonTypeIcon');
-    typeIconElement.src = `path_to_icons/${pokemon.types[0].type.name}.png`;
+    updateTypeIcon(pokemon.types[0].type.name);
 
     currentPokemon = {
         name: pokemon.name,
         id: pokemon.id,
-        type: pokemon.types[0].type.name 
+        type: pokemon.types[0].type.name
     };
 }
+
+
+function updateTypeIcon(type) {
+    const typeIconElement = document.getElementById('pokemonTypeIcon');
+
+    const typeToCardMap = {
+        fire: 'tipo_fuoco.png',         // Fuoco
+        water: 'tipo_acqua.png',        // Acqua
+        grass: 'tipo_erba.png',         // Erba
+        electric: 'tipo_elettro.png',   // Elettro
+        ice: 'tipo_acqua.png',          // Ghiaccio -> Acqua
+        fighting: 'tipo_lotta.png',     // Lotta
+        poison: 'tipo_psico.png',       // Veleno -> Psico
+        ground: 'tipo_lotta.png',       // Terra -> Lotta
+        flying: 'tipo_normale.png',    // Volante -> Normale
+        psychic: 'tipo_psico.png',      // Psico
+        bug: 'tipo_erba.png',           // Insetto -> Erba
+        rock: 'tipo_lotta.png',         // Roccia -> Lotta
+        ghost: 'tipo_psico.png',        // Spettro -> Psico
+        dragon: 'tipo_drago.png',       // Drago
+        dark: 'tipo_buio.png',          // Buio
+        steel: 'tipo_acciao.png',      // Acciaio
+        fairy: 'tipo_folletto.png',     // Folletto
+        normal: 'tipo_normale.png'     // Normale -> Normale
+    };
+    
+    typeIconElement.src = `icon_types/${typeToCardMap[type]}`;
+}
+
+
 
 function catchPokemon() {
     const name = currentPokemon.name;
