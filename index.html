@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Glass Grid</title>
     
-<link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
-<script src="https://cdn.tailwindcss.com"></script>
-
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
         @keyframes fadeIn {
@@ -17,51 +16,96 @@
         .animate-fade-in {
             animation: fadeIn 0.5s ease;
         }
-        
+
+        @keyframes gradientBackground {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+    .animated-gradient {
+        background: linear-gradient(270deg, #1a202c, #2d3748, #4a5568, #718096);
+        background-size: 400% 400%;
+        animation: gradientBackground 8s ease infinite;
+    }
+    .background-page {
+        background-image: url('./img/w1.jpg');
+        background-size: 20%;
+        background-position: center;
+        background-repeat: repeat;
+    }
+    .background-img {
+        background-image: url('./img/background-grass.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+    .decorative-box {
+    background: rgba(255, 255, 255, 0.1); /* Trasparenza */
+    border-radius: 16px; /* Bordi arrotondati */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Bordo sottile */
+    backdrop-filter: blur(10px); /* Sfocatura dello sfondo */
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); /* Ombra per profondità */
+    padding: 20px; /* Spazio interno */
+    max-width: 300px; /* Larghezza massima */
+    margin: 0 auto; /* Centrato orizzontalmente */
+    text-align: center; /* Testo centrato */
+}
+
+
     </style>
 </head>
-<body>
-    <div class="min-h-screen p-2.5 bg-gradient-to-tr from-neutral-900 via-neutral-800 to-neutral-700">
+<body >
+    <div class="min-h-screen p-2.5 bg-gradient-to-tr from-neutral-900 via-neutral-800 to-neutral-700 min-h-screen p-2.5 animated-gradient">
         <!-- Grid Container -->
-        <div class="grid grid-cols-4 md:grid-cols-8 grid-rows-4 md:grid-rows-5 gap-3 h-screen p-2.5 backdrop-blur-lg">
+        <div class="grid grid-cols-4 md:grid-cols-8 grid-rows-4 md:grid-rows-5 gap-3 h-screen p-2.5 backdrop-blur-lg background-page">
             <!-- Item 0 - Center Main -->
             <div class="col-span-2 md:col-span-4 row-span-3 md:col-start-3 md:row-start-1 
                         bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-5
                         shadow-lg shadow-black/10 text-white/80 
                         hover:bg-neutral-900/70 hover:border-yellow-500/50 hover:shadow-yellow-500/20
-                        transition-all duration-300">
-                        0
+                        transition-all duration-300 background-img">
                         <div class="bg-cover bg-center p-4 rounded-lg" id="pokemonDisplay" style="width: 100%; height: 80%;">
                             <img src="" alt="Pokémon" id="pokemonSprite" class="m-auto w-full h-full object-contain" style="display: none;">
                         </div>
+                        <div class="decorative-box">
                         <div id="pokemon-info" class="flex justify-center items-center space-x-4">
                             <h2 id="pokemonName" class="text-xl font-bold"></h2>
                             <div class="pokemon-type">
                                 <img id="pokemonTypeIcon" src="" alt="Tipo Pokémon" class="w-8 h-8">
                             </div>
-                        </div>                        
-                        
+                        </div>  
+                    </div>                      
             </div>
 
             <!-- Item 1 - Left Side -->
-            <div class="col-span-1 md:col-span-2 row-span-3 md:row-span-4 md:col-start-1 md:row-start-1
-                        bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-5
-                        shadow-lg shadow-black/10 text-white/80 text-xl
-                        hover:bg-neutral-900/70 hover:border-yellow-500/50 hover:shadow-yellow-500/20
-                        transition-all duration-300">
-                <div id="myPokemonList" class="space-y-4 overflow-y-auto max-h-full"></div> <!--overflow auto aggiunge la scrollbar solo se necessaria e max h è l'altezza massima del div-->
-            </div>
+           <!-- Item 1 - Left Side -->
+<div class="col-span-1 md:col-span-2 row-span-3 md:row-span-4 md:col-start-1 md:row-start-1
+bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-5
+shadow-lg shadow-black/10 text-white/80 text-xl
+hover:bg-neutral-900/70 hover:border-yellow-500/50 hover:shadow-yellow-500/20
+transition-all duration-300">
+<div id="myPokemonList" class="space-y-4 overflow-y-auto overflow-x-hidden max-h-full"></div> <!--Viene nascosto l'overflow orizzontale-->
+</div>
 
-            <!-- Item 2 - Right Side -->
-            <div class="col-span-1 md:col-span-2 row-span-3 md:row-span-4 md:col-start-7 md:row-start-1
-                        bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-5
-                        shadow-lg shadow-black/10 text-white/80 text-xl
-                        hover:bg-neutral-900/70 hover:border-yellow-500/50 hover:shadow-yellow-500/20
-                        transition-all duration-300">
-                2
-                <h2 class="text-xl font-bold mb-4">Pokémon Details</h2>
-                <div id="details"></div>
-            </div>
+
+<!--Rimosso il details in eccesso-->
+
+<!-- Item 2 - Right Side -->
+<div class="col-span-1 md:col-span-2 row-span-3 md:row-span-4 md:col-start-7 md:row-start-1
+bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-5
+shadow-lg shadow-black/10 text-white/80 text-xl
+hover:bg-neutral-900/70 hover:border-yellow-500/50 hover:shadow-yellow-500/20
+transition-all duration-300">
+<div id="details" class="space-y-4 overflow-y-auto max-h-full bg-gray-800 p-4 rounded-xl shadow-md border border-gray-700">
+</div>
+</div>
+
 
             <!-- Item 3 - Bottom Center -->
             <div class="col-span-2 md:col-span-4 row-span-1 md:row-span-2 md:col-start-3 md:row-start-4
@@ -70,7 +114,7 @@
                         hover:bg-neutral-900/70 hover:border-yellow-500/50 hover:shadow-yellow-500/20
                         transition-all duration-300
                         flex flex-col gap-2">
-                        <button id="catchButton" class="btn btn-success mt-4">Catch</button>
+                <button id="catchButton" class="btn btn-success mt-4">Catch</button>
             </div>
 
             <!-- Item 4 - Bottom Left -->
@@ -79,8 +123,6 @@
                         shadow-lg shadow-black/10 text-white/80 text-xl
                         hover:bg-neutral-900/70 hover:border-yellow-500/50 hover:shadow-yellow-500/20
                         transition-all duration-300">
-                4
-                
                 <div id="section-4" class="mt-4">
                     <button id="removeAllButton" 
                         class="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition">
@@ -99,7 +141,6 @@
                         shadow-lg shadow-black/10 text-white/80 text-xl
                         hover:bg-neutral-900/70 hover:border-yellow-500/50 hover:shadow-yellow-500/20
                         transition-all duration-300">
-                5
                 <div id="section-5" class="mt-4 flex justify-between items-center">
                     <button id="previousButton" 
                         class="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition">

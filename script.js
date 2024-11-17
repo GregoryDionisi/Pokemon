@@ -3,11 +3,16 @@ const myPokemonList = JSON.parse(localStorage.getItem('myPokemon')) || [];
 const pokemonDisplay = document.getElementById('pokemonDisplay');
 const myPokemonDiv = document.getElementById('myPokemonList');
 const detailsDiv = document.getElementById('details');
-const cardsPerPage = 6;
+//rimozione di cardsPerPage
+let currentDetailIndex = 0;
+
+
+
+
+
 
 document.getElementById('catchButton').addEventListener('click', catchPokemon);
 
-// Funzione per recuperare un Pokémon casuale
 async function fetchRandomPokemon() {
     const randomId = Math.floor(Math.random() * 150) + 1;
     try {
@@ -22,28 +27,55 @@ async function fetchRandomPokemon() {
     }
 }
 
-// Mostra il Pokémon nella schermata centrale
 let currentPokemon = {};
 
 function displayPokemon(pokemon) {
     const imgElement = document.getElementById('pokemonSprite');
     imgElement.src = pokemon.sprites.front_default;
     imgElement.style.display = 'block';
+    const types = [
+        { type: 'Normal', color: '#9FA19F', iconUrl: 'https://archives.bulbagarden.net/media/upload/thumb/a/ae/Normal_icon.png/20px-Normal_icon.png', link: '/wiki/Normal_(type)' },
+        { type: 'Fire', color: '#E62829', iconUrl: 'https://archives.bulbagarden.net/media/upload/thumb/5/5e/Fire_icon.png/20px-Fire_icon.png', link: '/wiki/Fire_(type)' },
+        { type: 'Fighting', color: '#FF8000', iconUrl: 'https://archives.bulbagarden.net/media/upload/thumb/7/7d/Fighting_icon.png/20px-Fighting_icon.png', link: '/wiki/Fighting_(type)' },
+        { type: 'Water', color: '#2980EF', iconUrl: 'https://archives.bulbagarden.net/media/upload/thumb/7/7f/Water_icon.png/20px-Water_icon.png', link: '/wiki/Water_(type)' },
+        { type: 'Flying', color: '#81B9EF', iconUrl: 'https://archives.bulbagarden.net/media/upload/thumb/f/f0/Flying_icon.png/20px-Flying_icon.png', link: '/wiki/Flying_(type)' },
+        { type: 'Grass', color: '#3FA129', iconUrl: 'https://archives.bulbagarden.net/media/upload/thumb/c/cb/Grass_icon.png/20px-Grass_icon.png', link: '/wiki/Grass_(type)' },
+        { type: 'Poison', color: '#9141CB', iconUrl: 'https://archives.bulbagarden.net/media/upload/thumb/8/84/Poison_icon.png/20px-Poison_icon.png', link: '/wiki/Poison_(type)' },
+        { type: 'Electric', color: '#FAC000', iconUrl: 'https://archives.bulbagarden.net/media/upload/thumb/a/af/Electric_icon.png/20px-Electric_icon.png', link: '/wiki/Electric_(type)' },
+        { type: 'Ground', color: '#915121', iconUrl: 'https://archives.bulbagarden.net/media/upload/thumb/5/58/Ground_icon.png/20px-Ground_icon.png', link: '/wiki/Ground_(type)' },
+        { type: 'Psychic', color: '#EF4179', iconUrl: 'https://archives.bulbagarden.net/media/upload/thumb/a/a6/Psychic_icon.png/20px-Psychic_icon.png', link: '/wiki/Psychic_(type)' },
+        { type: 'Rock', color: '#AFA981', iconUrl: 'https://archives.bulbagarden.net/media/upload/thumb/f/ff/Rock_icon.png/20px-Rock_icon.png', link: '/wiki/Rock_(type)' },
+        { type: 'Ice', color: '#3DCEF3', iconUrl: 'https://archives.bulbagarden.net/media/upload/thumb/8/83/Ice_icon.png/20px-Ice_icon.png', link: '/wiki/Ice_(type)' },
+        { type: 'Bug', color: '#91A119', iconUrl: 'https://archives.bulbagarden.net/media/upload/thumb/7/79/Bug_icon.png/20px-Bug_icon.png', link: '/wiki/Bug_(type)' },
+    ];
+    
+    const typesContainer = document.getElementById("types");
 
     const nameElement = document.getElementById('pokemonName');
     nameElement.textContent = pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
 
     const typeIconElement = document.getElementById('pokemonTypeIcon');
-    typeIconElement.src = `path_to_icons/${pokemon.types[0].type.name}.png`;
+    const typeName = pokemon.types[0].type.name;
+
+    // Trova il tipo del Pokémon nell'array e prendi l'URL dell'icona
+    const typeInfo = types.find(t => t.type.toLowerCase() === typeName.toLowerCase());
+
+    if (typeInfo) {
+        typeIconElement.src = typeInfo.iconUrl;
+        typeIconElement.alt = `${typeName} icon`;
+    } else {
+        // Fallback nel caso il tipo non venga trovato
+        typeIconElement.src = 'https://via.placeholder.com/64?text=?';
+        typeIconElement.alt = 'Unknown type';
+    }
 
     currentPokemon = {
         name: pokemon.name,
         id: pokemon.id,
-        type: pokemon.types[0].type.name 
+        type: typeNameIconElement
     };
 }
 
-// Funzione per catturare il Pokémon
 function catchPokemon() {
     const name = currentPokemon.name;
     const id = currentPokemon.id;
@@ -53,52 +85,287 @@ function catchPokemon() {
         if (!alreadyCaught) {
             myPokemonList.push({ id, name, sprite: document.getElementById('pokemonSprite').src });
             localStorage.setItem('myPokemon', JSON.stringify(myPokemonList));
-            renderPaginatedPokemon(0);  // Rendi visibile la prima pagina dopo aver catturato
+            renderPaginatedPokemon(0);
         }
     }
+
+
+    
+    //Visualizzare di default il primo
+if (myPokemonList.length > 0) {
+    showDetails(myPokemonList[0].id, 0);
+} else {
+    detailsDiv.innerHTML = '<p>No Pokemon selected</p>';
+}
+
 
     fetchRandomPokemon();
 }
 
-// Mostra i Pokémon catturati nel Pokédex con la paginazione
+
+
+
 let currentPage = 0;
+
+function updatePaginationButtons() {
+    const previousButton = document.getElementById('previousButton');
+    const nextButton = document.getElementById('nextButton');
+
+    previousButton.disabled = currentPage === 0;
+    nextButton.disabled = currentPage >= Math.ceil(myPokemonList.length / cardsPerPage) - 1;
+
+    // Also update navigation buttons for details
+    previousButton.disabled = currentDetailIndex === 0;
+    nextButton.disabled = currentDetailIndex >= myPokemonList.length - 1;
+}
+
+async function showDetails(id, index = null) {
+    if (index !== null) {
+        currentDetailIndex = index;
+    } else {
+        currentDetailIndex = myPokemonList.findIndex(p => p.id === id);
+    }
+    
+    try {
+        const response = await fetch(`${API_URL}${id}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch Pokémon details');
+        }
+        const data = await response.json();
+        displayDetails(data);
+        updatePaginationButtons();
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+function showNextPokemon() {
+    if (currentDetailIndex < myPokemonList.length - 1) {
+        currentDetailIndex++;
+        const nextPokemon = myPokemonList[currentDetailIndex];
+        showDetails(nextPokemon.id, currentDetailIndex);
+    }
+}
+
+function showPreviousPokemon() {
+    if (currentDetailIndex > 0) {
+        currentDetailIndex--;
+        const previousPokemon = myPokemonList[currentDetailIndex];
+        showDetails(previousPokemon.id, currentDetailIndex);
+    }
+}
+
+document.getElementById('previousButton').addEventListener('click', showPreviousPokemon);
+document.getElementById('nextButton').addEventListener('click', showNextPokemon);
+
+
+function removePokemon(id) {
+    const index = myPokemonList.findIndex(p => p.id === id);
+    if (index > -1) {
+        myPokemonList.splice(index, 1);
+        localStorage.setItem('myPokemon', JSON.stringify(myPokemonList));
+        
+        // Update currentDetailIndex if necessary
+        if (currentDetailIndex >= myPokemonList.length) {
+            currentDetailIndex = Math.max(0, myPokemonList.length - 1);
+        }
+        
+        // Show details of another Pokemon if available
+        if (myPokemonList.length > 0) {
+            showDetails(myPokemonList[currentDetailIndex].id, currentDetailIndex);
+        } else {
+            detailsDiv.innerHTML = '<p>No Pokemon selected</p>';
+        }
+        
+        renderPaginatedPokemon(currentPage);
+    }
+}
+
+function removeAllPokemon() {
+    myPokemonList.length = 0;
+    localStorage.setItem('myPokemon', JSON.stringify(myPokemonList));
+    detailsDiv.innerHTML = '<p>No Pokemon selected</p>';
+    currentDetailIndex = 0;
+    renderPaginatedPokemon(0);
+}
+
+function sortPokemonAlphabetically() {
+    myPokemonList.sort((a, b) => a.name.localeCompare(b.name));
+    localStorage.setItem('myPokemon', JSON.stringify(myPokemonList));
+    
+    // After sorting, maintain the current Pokemon in view but update its index
+    if (myPokemonList.length > 0) {
+        const currentId = myPokemonList[currentDetailIndex]?.id;
+        if (currentId) {
+            currentDetailIndex = myPokemonList.findIndex(p => p.id === currentId);
+            showDetails(currentId, currentDetailIndex);
+        }
+    }
+    
+    renderPaginatedPokemon(0);
+}
+
+document.getElementById('removeAllButton').addEventListener('click', removeAllPokemon);
+document.getElementById('sortButton').addEventListener('click', sortPokemonAlphabetically);
+
+// Initialize the app
+renderPaginatedPokemon(0);
+fetchRandomPokemon();
+
+
+
+
+
+
+//Visualizzare di default il primo
+if (myPokemonList.length > 0) {
+    showDetails(myPokemonList[0].id, 0);
+} else {
+    detailsDiv.innerHTML = '<p>No Pokemon selected</p>';
+}
+
+
+
+
+
+
+// Add keyboard navigation
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') {
+        showPreviousPokemon();
+    } else if (e.key === 'ArrowRight') {
+        showNextPokemon();
+    }
+});
+
+
+function displayDetails(pokemon) {   //OPZIONE 1 PER LA VISUALIZZAZIONE DEI DETTAGLI
+    detailsDiv.innerHTML = `
+        <div class="card bg-gradient-to-br from-gray-800 to-gray-900 shadow-xl p-6 rounded-xl border border-gray-700 
+                    transform transition-all duration-300 hover:scale-[1.02]">
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-sm text-gray-400">Pokemon ${currentDetailIndex + 1} of ${myPokemonList.length}</span>
+                <span class="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm">#${pokemon.id}</span>
+            </div>
+            
+            <div class="flex items-center gap-4 mb-6">
+                <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}" 
+                     class="w-32 h-32 object-contain rounded-xl bg-gray-800/50 p-2 hover:scale-110 transition-transform duration-300">
+                <div>
+                    <h3 class="text-2xl font-bold capitalize mb-2 text-white">${pokemon.name}</h3>
+                    <div class="flex gap-2">
+                        ${pokemon.types.map(type => `
+                            <span class="px-3 py-1 rounded-full text-sm capitalize bg-${type.type.name}/20 text-${type.type.name}-400">
+                                ${type.type.name}
+                            </span>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="bg-gray-800/30 p-4 rounded-lg">
+                    <h4 class="text-gray-400 text-sm mb-2">Height</h4>
+                    <p class="text-white font-semibold">${pokemon.height / 10} m</p>
+                </div>
+                <div class="bg-gray-800/30 p-4 rounded-lg">
+                    <h4 class="text-gray-400 text-sm mb-2">Weight</h4>
+                    <p class="text-white font-semibold">${pokemon.weight / 10} kg</p>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h4 class="text-gray-400 mb-3">Abilities</h4>
+                <div class="flex flex-wrap gap-2">
+                    ${pokemon.abilities.map(ability => `
+                        <span class="px-3 py-1 bg-gray-700/50 rounded-full text-sm capitalize">
+                            ${ability.ability.name.replace('-', ' ')}
+                        </span>
+                    `).join('')}
+                </div>
+            </div>
+
+            <div>
+                <h4 class="text-gray-400 mb-3">Stats</h4>
+                <div class="space-y-3">
+                    ${pokemon.stats.map(stat => `
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="text-gray-400 capitalize">${stat.stat.name.replace('-', ' ')}</span>
+                                <span class="text-white">${stat.base_stat}</span>
+                            </div>
+                            <div class="h-2 bg-gray-700 rounded-full overflow-hidden">
+                                <div class="h-full bg-blue-500 rounded-full" 
+                                     style="width: ${(stat.base_stat / 255) * 100}%"></div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        </div>
+    `;
+}
+
 
 function renderPaginatedPokemon(page) {
     currentPage = page;
-    const startIndex = page * cardsPerPage;
-    const paginatedPokemon = myPokemonList.slice(startIndex, startIndex + cardsPerPage);
+    //Non c'è più un limite di carte per pagina, quindi mostriamo tutti i Pokémon
+    const paginatedPokemon = myPokemonList; //Viene usato direttamente tutta la lista dei pokemon senza suddividerli in pagine
 
     myPokemonDiv.innerHTML = '';
-    paginatedPokemon.forEach(pokemon => {
+    paginatedPokemon.forEach((pokemon, index) => {
         const pokemonCard = document.createElement('div');
         pokemonCard.classList.add(
-            'bg-opacity-50',
             'bg-gradient-to-br',
-            'from-gray-700',
+            'from-gray-800',
             'to-gray-900',
             'backdrop-blur-lg',
             'shadow-xl',
-            'rounded-2xl',
-            'w-48',
-            'h-56',
+            'rounded-xl',
+            'w-full',
+            'max-w-xs',
             'flex',
             'flex-col',
             'items-center',
-            'justify-between',
             'p-4',
-            'm-4'
+            'border',
+            'border-gray-700',
+            'hover:border-blue-500/50',
+            'transform',
+            'transition-all',
+            'duration-300',
+            'hover:scale-105',
+            'hover:shadow-blue-500/10',
+            'hover:shadow-lg',
+            'animate-fade-in'
         );
+        pokemonCard.style.animationDelay = `${index * 100}ms`;
 
         pokemonCard.innerHTML = `
-            <img src="${pokemon.sprite}" alt="${pokemon.name}" class="w-24 h-24 object-contain mt-2">
-            <p class="text-center text-lg font-semibold text-white capitalize">${pokemon.name}</p>
-            <div class="flex gap-2 mt-2">
+            <div class="relative w-full">
+                <span class="absolute top-0 right-0 px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm">
+                    #${pokemon.id}
+                </span>
+                <img src="${pokemon.sprite}" alt="${pokemon.name}" 
+                     class="w-32 h-32 object-contain mx-auto transition-transform duration-300 hover:scale-110">
+            </div>
+            <p class="text-xl font-bold text-white capitalize mt-4 mb-6">${pokemon.name}</p>
+            <div class="flex gap-2 w-full justify-center">
                 <button onclick="showDetails(${pokemon.id})" 
-                    class="bg-green-500 text-white text-sm font-bold py-1 px-3 rounded-lg hover:bg-green-600 transition">
+                    class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 
+                           transition-colors duration-300 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                        <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                    </svg>
                     Details
                 </button>
                 <button onclick="removePokemon(${pokemon.id})" 
-                    class="bg-red-500 text-white text-sm font-bold py-1 px-3 rounded-lg hover:bg-red-600 transition">
+                    class="bg-red-500/20 text-red-300 px-4 py-2 rounded-lg hover:bg-red-500/30 
+                           transition-colors duration-300 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
                     Remove
                 </button>
             </div>
@@ -109,83 +376,48 @@ function renderPaginatedPokemon(page) {
     updatePaginationButtons();
 }
 
-// Funzione per aggiornare lo stato dei bottoni di navigazione
+
+// Aggiorna lo stile dei bottoni di navigazione
 function updatePaginationButtons() {
     const previousButton = document.getElementById('previousButton');
     const nextButton = document.getElementById('nextButton');
 
-    previousButton.disabled = currentPage === 0;
-    nextButton.disabled = currentPage >= Math.ceil(myPokemonList.length / cardsPerPage) - 1;
-}
+    const baseClasses = 'px-4 py-2 rounded-lg transition-all duration-300 flex items-center gap-2';
+    const enabledClasses = 'bg-blue-500 text-white hover:bg-blue-600';
+    const disabledClasses = 'bg-gray-700 text-gray-400 cursor-not-allowed opacity-50';
 
-// Navigazione tra le pagine
-document.getElementById('previousButton').addEventListener('click', () => {
-    if (currentPage > 0) renderPaginatedPokemon(currentPage - 1);
-});
+    previousButton.className = `${baseClasses} ${currentDetailIndex === 0 ? disabledClasses : enabledClasses}`;
+    nextButton.className = `${baseClasses} ${currentDetailIndex >= myPokemonList.length - 1 ? disabledClasses : enabledClasses}`;
 
-document.getElementById('nextButton').addEventListener('click', () => {
-    if (currentPage < Math.ceil(myPokemonList.length / cardsPerPage) - 1) {
-        renderPaginatedPokemon(currentPage + 1);
-    }
-});
+    previousButton.disabled = currentDetailIndex === 0;
+    nextButton.disabled = currentDetailIndex >= myPokemonList.length - 1;
 
-// Funzione per mostrare i dettagli del Pokémon selezionato
-async function showDetails(id) {
-    try {
-        const response = await fetch(`${API_URL}${id}`);
-        if (!response.ok) {
-            throw new Error('Failed to fetch Pokémon details');
-        }
-        const data = await response.json();
-        displayDetails(data);
-    } catch (error) {
-        console.error(error);
-    }
-}
+    // Aggiorna icone dei bottoni
+    previousButton.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+        </svg>
+        Previous
+    `;
 
-function displayDetails(pokemon) {
-    detailsDiv.innerHTML = `
-        <div class="card bg-base-100 shadow-lg p-4">
-            <h3 class="text-lg font-bold">${pokemon.name}</h3>
-            <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}" class="w-20 h-20 my-4">
-            <p>Type: ${pokemon.types.map(type => type.type.name).join(', ')}</p>
-            <p>Abilities: ${pokemon.abilities.map(ability => ability.ability.name).join(', ')}</p>
-            <ul class="mt-4">
-                ${pokemon.stats.map(stat => `<li>${stat.stat.name}: ${stat.base_stat}</li>`).join('')}
-            </ul>
-        </div>
+    nextButton.innerHTML = `
+        Next
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+        </svg>
     `;
 }
 
-function removePokemon(id) {
-    const index = myPokemonList.findIndex(p => p.id === id);
-    if (index > -1) {
-        myPokemonList.splice(index, 1);
-        localStorage.setItem('myPokemon', JSON.stringify(myPokemonList));
-        renderPaginatedPokemon(currentPage);
-}
-}
+// Aggiorna lo stile dei bottoni di utility
+document.getElementById('removeAllButton').className = 
+    'bg-red-500/20 text-red-300 px-4 py-2 rounded-lg hover:bg-red-500/30 transition-all duration-300 flex items-center gap-2';
+document.getElementById('sortButton').className = 
+    'bg-blue-500/20 text-blue-300 px-4 py-2 rounded-lg hover:bg-blue-500/30 transition-all duration-300 flex items-center gap-2';
 
-// Funzione per eliminare tutti i Pokémon
-function removeAllPokemon() {
-    myPokemonList.length = 0;
-    localStorage.setItem('myPokemon', JSON.stringify(myPokemonList));
-    renderPaginatedPokemon(0);
-}
+// Aggiorna lo stile del bottone Catch
+document.getElementById('catchButton').className = 
+    'btn bg-gradient-to-r from-blue-500 to-blue-600 text-white border-none hover:from-blue-600 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-blue-500/20';
 
-// Funzione per ordinare i Pokémon alfabeticamente
-function sortPokemonAlphabetically() {
-    myPokemonList.sort((a, b) => a.name.localeCompare(b.name));
-    localStorage.setItem('myPokemon', JSON.stringify(myPokemonList));
-    renderPaginatedPokemon(0);
-}
 
-// Aggiunta dei bottoni extra alla UI
-document.getElementById('removeAllButton').addEventListener('click', removeAllPokemon);
-document.getElementById('sortButton').addEventListener('click', sortPokemonAlphabetically);
 
-// Mostra la pagina iniziale del Pokédex
-renderPaginatedPokemon(0);
-
-// Carica un Pokémon casuale all'inizio
-fetchRandomPokemon();
+    
