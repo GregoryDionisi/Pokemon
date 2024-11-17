@@ -72,7 +72,7 @@ function displayPokemon(pokemon) {
     currentPokemon = {
         name: pokemon.name,
         id: pokemon.id,
-        type: typeNameIconElement
+        type: typeName
     };
 }
 
@@ -238,7 +238,7 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-
+/*
 function displayDetails(pokemon) {   //OPZIONE 1 PER LA VISUALIZZAZIONE DEI DETTAGLI
     detailsDiv.innerHTML = `
         <div class="card bg-gradient-to-br from-gray-800 to-gray-900 shadow-xl p-6 rounded-xl border border-gray-700 
@@ -305,7 +305,7 @@ function displayDetails(pokemon) {   //OPZIONE 1 PER LA VISUALIZZAZIONE DEI DETT
         </div>
     `;
 }
-
+*/
 
 function renderPaginatedPokemon(page) {
     currentPage = page;
@@ -420,4 +420,58 @@ document.getElementById('catchButton').className =
 
 
 
+function displayDetails(pokemon) {   //OPZIONE 2 PER LA VISUALIZZAZIONE DEI DETTAGLI
+        detailsDiv.innerHTML = `
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-400">Pokemon ${currentDetailIndex + 1} di ${myPokemonList.length}</span>
+                    <span class="text-sm px-2 py-1 bg-blue-500/20 text-blue-300 rounded-lg">#${pokemon.id}</span>
+                </div>
+    
+                <h3 class="text-2xl font-bold capitalize">${pokemon.name}</h3>
+    
+                <div class="flex gap-4">
+                    <img src="${pokemon.sprites.front_default}" 
+                         alt="${pokemon.name}" 
+                         class="w-32 h-32 object-cover rounded-lg bg-gray-700 p-2">
+                    <div>
+                        <h4 class="text-lg font-semibold text-gray-300">Informazioni</h4>
+                        <p class="text-sm">Tipo: ${pokemon.types.map(type => type.type.name).join(', ')}</p>
+                        <p class="text-sm">Altezza: ${pokemon.height / 10} m</p>
+                        <p class="text-sm">Peso: ${pokemon.weight / 10} kg</p>
+                    </div>
+                </div>
+    
+                <div>
+                    <h4 class="text-lg font-semibold text-gray-300 mb-2">Abilità</h4>
+                    <div class="flex flex-wrap gap-2">
+                        ${pokemon.abilities.map(ability => `
+                            <span class="px-3 py-1 bg-gray-700 rounded-full text-sm capitalize">
+                                ${ability.ability.name.replace('-', ' ')}
+                            </span>
+                        `).join('')}
+                    </div>
+                </div>
+    
+                <div>
+                    <h4 class="text-lg font-semibold text-gray-300 mb-2">Statistiche</h4>
+                    <div class="space-y-2">
+                        ${pokemon.stats.map(stat => `
+                            <div>
+                                <div class="flex justify-between text-sm text-gray-400">
+                                    <span>${stat.stat.name.replace('-', ' ')}</span>
+                                    <span>${stat.base_stat}</span>
+                                </div>
+                                <div class="h-2 bg-gray-700 rounded-full overflow-hidden">
+                                    <div class="h-full bg-blue-500 rounded-full" 
+                                         style="width: ${(stat.base_stat / 255) * 100}%"></div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
     
