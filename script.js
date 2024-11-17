@@ -2,6 +2,7 @@ const API_URL = 'https://pokeapi.co/api/v2/pokemon/';
 const myPokemonList = JSON.parse(localStorage.getItem('myPokemon')) || [];
 const pokemonDisplay = document.getElementById('pokemonDisplay');
 const myPokemonDiv = document.getElementById('myPokemonList');
+const pokemonTypeIcon = document.getElementById('pokemonTypeIcon');
 const detailsDiv = document.getElementById('details');
 //rimozione di cardsPerPage
 let currentDetailIndex = 0;
