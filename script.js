@@ -55,8 +55,21 @@ function catchPokemon() {
         }
     }
 
+
+    
+    //Visualizzare di default il primo
+if (myPokemonList.length > 0) {
+    showDetails(myPokemonList[0].id, 0);
+} else {
+    detailsDiv.innerHTML = '<p>No Pokemon selected</p>';
+}
+
+
     fetchRandomPokemon();
 }
+
+
+
 
 let currentPage = 0;
 
@@ -164,6 +177,23 @@ document.getElementById('sortButton').addEventListener('click', sortPokemonAlpha
 // Initialize the app
 renderPaginatedPokemon(0);
 fetchRandomPokemon();
+
+
+
+
+
+
+//Visualizzare di default il primo
+if (myPokemonList.length > 0) {
+    showDetails(myPokemonList[0].id, 0);
+} else {
+    detailsDiv.innerHTML = '<p>No Pokemon selected</p>';
+}
+
+
+
+
+
 
 // Add keyboard navigation
 document.addEventListener('keydown', (e) => {
