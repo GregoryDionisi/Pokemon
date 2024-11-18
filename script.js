@@ -27,8 +27,8 @@ let currentPokemon = {};
 function displayPokemon(pokemon) {
     const imgElement = document.getElementById('pokemonSprite');
     
-    imgElement.src = `./showdown/${pokemon.id}.gif`; //OPZIONE 1: VISUALIZZAZIONE POKEMON 3D
-    //imgElement.src = `./animated/${pokemon.id}.gif`; //OPZIONE 2: VISUALIZZAZIONE POKEMON 2D
+    imgElement.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${pokemon.id}.gif`; //OPZIONE 1: VISUALIZZAZIONE POKEMON 3D
+    //imgElement.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/${pokemon.id}.gif`; //OPZIONE 2: VISUALIZZAZIONE POKEMON 2D
 
     imgElement.style.display = 'block';
 
@@ -343,7 +343,7 @@ function renderPaginatedPokemon(page) {
                 <span class="absolute top-0 right-0 px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm">
                     #${pokemon.id}
                 </span>
-                <img src="${pokemon.sprite}" alt="${pokemon.name}" 
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${pokemon.id}.gif" alt="${pokemon.name}" 
                      class="w-32 h-32 object-contain mx-auto transition-transform duration-300 hover:scale-110">
             </div>
             <p class="text-xl font-bold text-white capitalize mt-4 mb-6">${pokemon.name}</p>
