@@ -27,7 +27,8 @@ let currentPokemon = {};
 function displayPokemon(pokemon) {
     const imgElement = document.getElementById('pokemonSprite');
     
-    imgElement.src = `./sprites/sprites/pokemon/other/showdown/${pokemon.id}.gif`;
+    imgElement.src = `./showdown/${pokemon.id}.gif`; //OPZIONE 1: VISUALIZZAZIONE POKEMON 3D
+    //imgElement.src = `./animated/${pokemon.id}.gif`; //OPZIONE 2: VISUALIZZAZIONE POKEMON 2D
 
     imgElement.style.display = 'block';
 
