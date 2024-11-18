@@ -26,7 +26,9 @@ let currentPokemon = {};
 
 function displayPokemon(pokemon) {
     const imgElement = document.getElementById('pokemonSprite');
-    imgElement.src = pokemon.sprites.front_default;
+    
+    imgElement.src = `./sprites/sprites/pokemon/other/showdown/${pokemon.id}.gif`;
+
     imgElement.style.display = 'block';
 
     const nameElement = document.getElementById('pokemonName');
