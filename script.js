@@ -183,11 +183,9 @@ function removePokemon(id) {
 function removeAllPokemon() {
     myPokemonList.length = 0;
     localStorage.setItem('myPokemon', JSON.stringify(myPokemonList));
-    myPokemonDiv.innerHTML = '';
     detailsDiv.innerHTML = '<p>No Pokemon selected</p>';
     currentDetailIndex = 0;
     renderPaginatedPokemon(0);
-    fetchRandomPokemon();
 }
 
 
