@@ -6,6 +6,58 @@ const detailsDiv = document.getElementById('details');
 let currentDetailIndex = 0;
 
 document.getElementById('catchButton').addEventListener('click', catchPokemon);
+const catchButton = document.getElementById('catchButton');
+const pokemon = document.querySelector('.pkmn');
+
+// Aggiungi un listener per il click
+catchButton.addEventListener('click', () => {
+  startAnimation();
+});
+
+const startAnimation = () => {
+  const pkmn = $(".pkmn");  
+  pkmn.removeClass("exit");
+
+  setTimeout(() => {
+    // Ottieni due Pokémon casuali dalla PokéAPI
+    const poke1 = getRandomPokemon();
+    const poke2 = getRandomPokemon();
+    
+    // Quando i dati dei Pokémon sono pronti, aggiorna gli sprite
+    Promise.all([poke1, poke2]).then((sprites) => {
+      // Imposta gli sprite come variabili CSS
+      $("#app").attr("style", `
+        --poke1:url(${sprites[0]});
+        --poke2:url(${sprites[1]});
+      `);
+
+      // Aggiungi la classe 'exit' per far partire l'animazione
+      pkmn.addClass("exit");
+    });
+  }, 100);
+}
+
+$("#catchButton").on("click", startAnimation);
+
+$("input").on("change", (e) => {
+  if ($(e.currentTarget).is(":checked")) {
+    $("body").attr(`style`, `--slowmo: 5s; --slowsplode: 2s`);
+  } else {
+    $("body").attr("style", "");
+  }
+});
+
+// Funzione per ottenere uno sprite casuale dalla PokéAPI
+const getRandomPokemon = () => {
+  const randomId = Math.floor(Math.random() * 682) + 1; // Ottieni un ID Pokémon casuale tra 1 e 682
+  return fetch(`https://pokeapi.co/api/v2/pokemon/${randomId}`)
+    .then(response => response.json())
+    .then(data => {
+      const pokemonId = data.id; // Ottieni l'ID del Pokémon
+      // Costruisci l'URL dello sprite usando il formato specificato
+      return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${pokemonId}.gif`;
+    });
+};
 
 const maxPokemonId = 682; //limite massimo per le gif della cartella showdown
 
