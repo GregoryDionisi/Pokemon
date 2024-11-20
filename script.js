@@ -3,13 +3,16 @@ const myPokemonList = JSON.parse(localStorage.getItem('myPokemon')) || [];
 const pokemonDisplay = document.getElementById('pokemonDisplay');
 const myPokemonDiv = document.getElementById('myPokemonList');
 const detailsDiv = document.getElementById('details');
-//rimozione di cardsPerPage
 let currentDetailIndex = 0;
 
 document.getElementById('catchButton').addEventListener('click', catchPokemon);
 
+const maxPokemonId = 682; //limite massimo per le gif della cartella showdown
+
 async function fetchRandomPokemon() {
-    const randomId = Math.floor(Math.random() * 150) + 1;
+    // Genera un ID casuale tra 1 e maxPokemonId
+    const randomId = Math.floor(Math.random() * maxPokemonId) + 1;
+
     try {
         const response = await fetch(`${API_URL}${randomId}`);
         if (!response.ok) {
@@ -21,6 +24,22 @@ async function fetchRandomPokemon() {
         console.error(error);
     }
 }
+
+function displayPokemon(data) {
+    // Funzione per visualizzare i dettagli del Pokémon
+    const pokemonCard = document.createElement('div');
+    pokemonCard.classList.add('pokemon-card');
+    pokemonCard.innerHTML = `
+        <img src="${data.sprites.front_default}" alt="${data.name}" />
+        <h3>${data.name}</h3>
+        <p>Type: ${data.types.map(type => type.type.name).join(', ')}</p>
+        <p>Height: ${data.height}</p>
+        <p>Weight: ${data.weight}</p>
+    `;
+
+    pokemonDisplay.appendChild(pokemonCard);
+}
+
 
 let currentPokemon = {};
 
