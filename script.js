@@ -26,10 +26,8 @@ let currentPokemon = {};
 
 function displayPokemon(pokemon) {
     const imgElement = document.getElementById('pokemonSprite');
-    
-    imgElement.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${pokemon.id}.gif`; //OPZIONE 1: VISUALIZZAZIONE POKEMON 3D
-    //imgElement.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/${pokemon.id}.gif`; //OPZIONE 2: VISUALIZZAZIONE POKEMON 2D
 
+    imgElement.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${pokemon.id}.gif`; // GIF
     imgElement.style.display = 'block';
 
     const nameElement = document.getElementById('pokemonName');
@@ -40,7 +38,8 @@ function displayPokemon(pokemon) {
     currentPokemon = {
         name: pokemon.name,
         id: pokemon.id,
-        type: pokemon.types[0].type.name
+        type: pokemon.types[0].type.name,
+        sprite: pokemon.sprites.front_default
     };
 }
 
@@ -81,24 +80,25 @@ function catchPokemon() {
     if (name && id) {
         const alreadyCaught = myPokemonList.find(p => p.id === id);
         if (!alreadyCaught) {
-            myPokemonList.push({ id, name, sprite: document.getElementById('pokemonSprite').src });
+            myPokemonList.push({ 
+                id, 
+                name, 
+                sprite: currentPokemon.sprite //prima non veniva presa l'immagine originale perchè i vecchi pokemon già catturati avevano ancora la gif, mentre ormai quelli nuovi no
+            });
             localStorage.setItem('myPokemon', JSON.stringify(myPokemonList));
             renderPaginatedPokemon(0);
         }
     }
 
-
-    
-    //Visualizzare di default il primo
-if (myPokemonList.length > 0) {
-    showDetails(myPokemonList[0].id, 0);
-} else {
-    detailsDiv.innerHTML = '<p>No Pokemon selected</p>';
-}
-
+    if (myPokemonList.length > 0) {
+        showDetails(myPokemonList[0].id, 0);
+    } else {
+        detailsDiv.innerHTML = '<p>No Pokemon selected</p>';
+    }
 
     fetchRandomPokemon();
 }
+
 
 
 
@@ -130,7 +130,8 @@ async function showDetails(id, index = null) {
             throw new Error('Failed to fetch Pokémon details');
         }
         const data = await response.json();
-        displayDetails(data);
+        //displayDetails(data);
+        displayCardDetails(data);
         updatePaginationButtons();
     } catch (error) {
         console.error(error);
@@ -182,10 +183,13 @@ function removePokemon(id) {
 function removeAllPokemon() {
     myPokemonList.length = 0;
     localStorage.setItem('myPokemon', JSON.stringify(myPokemonList));
+    myPokemonDiv.innerHTML = '';
     detailsDiv.innerHTML = '<p>No Pokemon selected</p>';
     currentDetailIndex = 0;
     renderPaginatedPokemon(0);
+    fetchRandomPokemon();
 }
+
 
 function sortPokemonAlphabetically() {
     myPokemonList.sort((a, b) => a.name.localeCompare(b.name));
@@ -247,7 +251,7 @@ function displayDetails(pokemon) {   //OPZIONE 1 PER LA VISUALIZZAZIONE DEI DETT
             </div>
             
             <div class="flex items-center gap-4 mb-6">
-                <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}" 
+                <img src="${pokemon.sprite}" alt="${pokemon.name}" 
                      class="w-32 h-32 object-contain rounded-xl bg-gray-800/50 p-2 hover:scale-110 transition-transform duration-300">
                 <div>
                     <h3 class="text-2xl font-bold capitalize mb-2 text-white">${pokemon.name}</h3>
@@ -343,7 +347,7 @@ function renderPaginatedPokemon(page) {
                 <span class="absolute top-0 right-0 px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm">
                     #${pokemon.id}
                 </span>
-                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${pokemon.id}.gif" alt="${pokemon.name}" 
+                <img src="${pokemon.sprite}" alt="${pokemon.name}" 
                      class="w-32 h-32 object-contain mx-auto transition-transform duration-300 hover:scale-110">
             </div>
             <p class="text-xl font-bold text-white capitalize mt-4 mb-6">${pokemon.name}</p>
@@ -414,6 +418,44 @@ document.getElementById('sortButton').className =
 // Aggiorna lo stile del bottone Catch
 document.getElementById('catchButton').className = 
     'btn bg-gradient-to-r from-blue-500 to-blue-600 text-white border-none hover:from-blue-600 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-blue-500/20';
+
+
+
+
+
+
+
+
+
+function displayCardDetails(pokemon){
+        const typeCardElement = document.getElementById('typeCardElement');
+        
+        const typeToCardMap = {
+            fire: 'card_background_fuoco.png',         // Fuoco
+            water: 'card_background_acqua.png',        // Acqua
+            grass: 'card_background_erba.png',         // Erba
+            electric: 'card_background_elettro.png',   // Elettro
+            ice: 'card_background_acqua.png',          // Ghiaccio -> Acqua
+            fighting: 'card_background_lotta.png',     // Lotta
+            poison: 'card_background_psico.png',       // Veleno -> Psico
+            ground: 'card_background_lotta.png',       // Terra -> Lotta
+            flying: 'card_background_normale.png',    // Volante -> Normale
+            psychic: 'card_background_psico.png',      // Psico
+            bug: 'card_background_erba.png',           // Insetto -> Erba
+            rock: 'card_background_lotta.png',         // Roccia -> Lotta
+            ghost: 'card_background_psico.png',        // Spettro -> Psico
+            dragon: 'card_background_drago.png',       // Drago
+            dark: 'card_background_buio.png',          // Buio
+            steel: 'card_background_acciaio.png',      // Acciaio
+            fairy: 'card_background_folletto.png',     // Folletto
+            normal: 'card_background_normale.png'     // Normale -> Normale
+        };
+            
+        typeCardElement.src = `card_background/${typeToCardMap[pokemon.types[0].type.name]}`;
+        }
+
+
+
 
 
 
