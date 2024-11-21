@@ -247,9 +247,10 @@ function sortPokemonAlphabetically() {
 document.getElementById('removeAllButton').addEventListener('click', removeAllPokemon);
 document.getElementById('sortButton').addEventListener('click', sortPokemonAlphabetically);
 
-// Initialize the app
+//Inizializza la web app
 renderPaginatedPokemon(0);
 fetchRandomPokemon();
+startAnimation(); //aggiunta della funzione in modo che parta subito l'animazione e risolvere il problema della pokeball vuota
 
 
 
