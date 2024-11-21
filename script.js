@@ -129,7 +129,7 @@ function updateTypeIcon(type) {
         electric: 'tipo_elettro.png',   // Elettro
         ice: 'tipo_acqua.png',          // Ghiaccio -> Acqua
         fighting: 'tipo_lotta.png',     // Lotta
-        poison: 'tipo_psico.png',       // Veleno -> Psico
+        poison: 'tipo_psico.png',       // Veleno -> Psico  
         ground: 'tipo_lotta.png',       // Terra -> Lotta
         flying: 'tipo_normale.png',    // Volante -> Normale
         psychic: 'tipo_psico.png',      // Psico
@@ -138,7 +138,7 @@ function updateTypeIcon(type) {
         ghost: 'tipo_psico.png',        // Spettro -> Psico
         dragon: 'tipo_drago.png',       // Drago
         dark: 'tipo_buio.png',          // Buio
-        steel: 'tipo_acciao.png',      // Acciaio
+        steel: 'tipo_acciaio.png',      // Acciaio
         fairy: 'tipo_folletto.png',     // Folletto
         normal: 'tipo_normale.png'     // Normale -> Normale
     };
@@ -155,11 +155,15 @@ function catchPokemon() {
     if (name && id) {
         const alreadyCaught = myPokemonList.find(p => p.id === id);
         if (!alreadyCaught) {
+            const typeElement = document.getElementById('pokemonTypeIcon');
+
             myPokemonList.push({ 
                 id, 
                 name, 
-                sprite: currentPokemon.sprite //prima non veniva presa l'immagine originale perchè i vecchi pokemon già catturati avevano ancora la gif, mentre ormai quelli nuovi no
+                sprite: currentPokemon.sprite,  //prima non veniva presa l'immagine originale perchè i vecchi pokemon già catturati avevano ancora la gif, mentre ormai quelli nuovi no
+                type: typeElement.src //in questo modo accedi direttamente alla source dal DOMx 
             });
+
             localStorage.setItem('myPokemon', JSON.stringify(myPokemonList));
             renderPaginatedPokemon(0);
         }
@@ -423,7 +427,10 @@ function renderPaginatedPokemon(page) {
                 <img src="${pokemon.sprite}" alt="${pokemon.name}" 
                      class="w-32 h-32 object-contain mx-auto transition-transform duration-300 hover:scale-110">
             </div>
-            <p class="text-xl font-bold text-white capitalize mt-4 mb-6">${pokemon.name}</p>
+            <div class="flex justify-center items-center space-x-4">
+            <p class="text-xl font-bold text-white capitalize mt-4 mb-4">${pokemon.name}</p>
+            <img src="${pokemon.type}" class="w-8 h-8">
+            </div>
             <div class="flex gap-2 w-full justify-center">
                 <button onclick="showDetails(${pokemon.id})" 
                     class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 
