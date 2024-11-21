@@ -59,7 +59,7 @@ const getRandomPokemon = () => {
     });
 };
 
-const maxPokemonId = 682; //limite massimo per le gif della cartella showdown
+const maxPokemonId = 1008; //limite massimo per gli sprite pokemon
 
 async function fetchRandomPokemon() {
     // Genera un ID casuale tra 1 e maxPokemonId
@@ -98,7 +98,11 @@ let currentPokemon = {};
 function displayPokemon(pokemon) {
     const imgElement = document.getElementById('pokemonSprite');
 
-    imgElement.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${pokemon.id}.gif`; // GIF
+    if (pokemon.id > 682) {
+        imgElement.src = pokemon.sprites.front_default;
+    } else {
+        imgElement.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${pokemon.id}.gif`; // GIF
+    }
     imgElement.style.display = 'block';
 
     const nameElement = document.getElementById('pokemonName');
