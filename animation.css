@@ -424,7 +424,7 @@
 
 .explode:before {
   content: "";
-  background-image: url("https://assets.codepen.io/13471/jimena-cuenca-changeworld-sprite.jpg");
+  /*è stato rimosso il background image in modo da non far comparire il quadrato nero*/
   position: absolute;
   left: 0;
   top: 0;

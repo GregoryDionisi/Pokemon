@@ -6,180 +6,140 @@ const detailsDiv = document.getElementById('details');
 let currentDetailIndex = 0;
 
 document.getElementById('catchButton').addEventListener('click', catchPokemon);
-const catchButton = document.getElementById('catchButton');
+document.getElementById('catchButton').addEventListener('click', () => {
+    startAnimation();
+  });
 const pokemon = document.querySelector('.pkmn');
 
-// Aggiungi un listener per il click
-catchButton.addEventListener('click', () => {
-  startAnimation();
-});
-
 const startAnimation = () => {
-  const pkmn = $(".pkmn");  
-  pkmn.removeClass("exit");
-
-  setTimeout(() => {
-    // Ottieni due Pokémon casuali dalla PokéAPI
-    const poke1 = getRandomPokemon();
-    const poke2 = getRandomPokemon();
-    
-    // Quando i dati dei Pokémon sono pronti, aggiorna gli sprite
-    Promise.all([poke1, poke2]).then((sprites) => {
-      // Imposta gli sprite come variabili CSS
-      $("#app").attr("style", `
-        --poke1:url(${sprites[0]});
-        --poke2:url(${sprites[1]});
-      `);
-
-      // Aggiungi la classe 'exit' per far partire l'animazione
-      pkmn.addClass("exit");
-    });
-  }, 100);
-}
-
-$("#catchButton").on("click", startAnimation);
-
-$("input").on("change", (e) => {
-  if ($(e.currentTarget).is(":checked")) {
-    $("body").attr(`style`, `--slowmo: 5s; --slowsplode: 2s`);
-  } else {
-    $("body").attr("style", "");
-  }
-});
-
-// Funzione per ottenere uno sprite casuale dalla PokéAPI
-const getRandomPokemon = () => {
-  const randomId = Math.floor(Math.random() * 682) + 1; // Ottieni un ID Pokémon casuale tra 1 e 682
-  return fetch(`https://pokeapi.co/api/v2/pokemon/${randomId}`)
-    .then(response => response.json())
-    .then(data => {
-      const pokemonId = data.id; // Ottieni l'ID del Pokémon
-      // Costruisci l'URL dello sprite usando il formato specificato
-      return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${pokemonId}.gif`;
-    });
-};
-
-const maxPokemonId = 1008; //limite massimo per gli sprite pokemon
-
-async function fetchRandomPokemon() {
-    // Genera un ID casuale tra 1 e maxPokemonId
-    const randomId = Math.floor(Math.random() * maxPokemonId) + 1;
-
-    try {
-        const response = await fetch(`${API_URL}${randomId}`);
-        if (!response.ok) {
-            throw new Error('Failed to fetch Pokémon');
-        }
-        const data = await response.json();
-        displayPokemon(data);
-    } catch (error) {
-        console.error(error);
+    const pkmn = $(".pkmn");  
+    pkmn.removeClass("exit");
+  
+    setTimeout(() => {
+      // Ottieni un Pokémon casuale dalla PokéAPI e aggiorna l'animazione
+      fetchRandomPokemon().then((data) => {
+        // Passa direttamente i dati a displayPokemon senza creare una costante `poke1`
+        $("#app").attr("style", `
+          --poke1:url(${data.sprite});
+        `);
+  
+        // Aggiungi la classe 'exit' per far partire l'animazione
+        pkmn.addClass("exit");
+      });
+    }, 100);
+  };
+  
+  $("#catchButton").on("click", startAnimation);
+  
+  $("input").on("change", (e) => {
+    if ($(e.currentTarget).is(":checked")) {
+      $("body").attr(`style`, `--slowmo: 5s; --slowsplode: 2s`);
+    } else {
+      $("body").attr("style", "");
     }
-}
-
-function displayPokemon(data) {
-    // Funzione per visualizzare i dettagli del Pokémon
-    const pokemonCard = document.createElement('div');
-    pokemonCard.classList.add('pokemon-card');
-    pokemonCard.innerHTML = `
-        <img src="${data.sprites.front_default}" alt="${data.name}" />
-        <h3>${data.name}</h3>
-        <p>Type: ${data.types.map(type => type.type.name).join(', ')}</p>
-        <p>Height: ${data.height}</p>
-        <p>Weight: ${data.weight}</p>
-    `;
-
-    pokemonDisplay.appendChild(pokemonCard);
-}
-
+  });
+  
+  // Funzione per ottenere un Pokémon casuale dalla PokéAPI
+  async function fetchRandomPokemon() {
+    const randomId = Math.floor(Math.random() * 1008) + 1; // Ottieni un ID Pokémon casuale tra 1 e 1008
+  
+    try {
+      const response = await fetch(`${API_URL}${randomId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch Pokémon');
+      }
+      const data = await response.json();
+  
+      // Recupera lo sprite e i dettagli del Pokémon
+      data.sprite = data.id > 682 
+        ? data.sprites.front_default
+        : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${data.id}.gif`;
+  
+      // Passa direttamente i dati a displayPokemon
+      displayPokemon(data);
+      return data; // opzionale, ma restituisce comunque il dato per eventuali usi futuri
+  
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  
+  
+  
+  
 
 let currentPokemon = {};
 
 function displayPokemon(pokemon) {
-    const imgElement = document.getElementById('pokemonSprite');
+  const nameElement = document.getElementById('pokemonName');
+  nameElement.textContent = pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
 
-    if (pokemon.id > 682) {
-        imgElement.src = pokemon.sprites.front_default;
-    } else {
-        imgElement.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${pokemon.id}.gif`; // GIF
-    }
-    imgElement.style.display = 'block';
+  updateTypeIcon(pokemon.types[0].type.name);
 
-    const nameElement = document.getElementById('pokemonName');
-    nameElement.textContent = pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
-
-    updateTypeIcon(pokemon.types[0].type.name);
-
-    currentPokemon = {
-        name: pokemon.name,
-        id: pokemon.id,
-        type: pokemon.types[0].type.name,
-        sprite: pokemon.sprites.front_default
-    };
+  currentPokemon = {
+    name: pokemon.name,
+    id: pokemon.id,
+    type: pokemon.types[0].type.name,
+    sprite: pokemon.sprites.front_default
+};
 }
-
 
 function updateTypeIcon(type) {
-    const typeIconElement = document.getElementById('pokemonTypeIcon');
+  const typeIconElement = document.getElementById('pokemonTypeIcon');
 
-    const typeToCardMap = {
-        fire: 'tipo_fuoco.png',         // Fuoco
-        water: 'tipo_acqua.png',        // Acqua
-        grass: 'tipo_erba.png',         // Erba
-        electric: 'tipo_elettro.png',   // Elettro
-        ice: 'tipo_acqua.png',          // Ghiaccio -> Acqua
-        fighting: 'tipo_lotta.png',     // Lotta
-        poison: 'tipo_psico.png',       // Veleno -> Psico  
-        ground: 'tipo_lotta.png',       // Terra -> Lotta
-        flying: 'tipo_normale.png',    // Volante -> Normale
-        psychic: 'tipo_psico.png',      // Psico
-        bug: 'tipo_erba.png',           // Insetto -> Erba
-        rock: 'tipo_lotta.png',         // Roccia -> Lotta
-        ghost: 'tipo_psico.png',        // Spettro -> Psico
-        dragon: 'tipo_drago.png',       // Drago
-        dark: 'tipo_buio.png',          // Buio
-        steel: 'tipo_acciaio.png',      // Acciaio
-        fairy: 'tipo_folletto.png',     // Folletto
-        normal: 'tipo_normale.png'     // Normale -> Normale
-    };
-    
-    typeIconElement.src = `icon_types/${typeToCardMap[type]}`;
+  const typeToCardMap = {
+    fire: 'tipo_fuoco.png',
+    water: 'tipo_acqua.png',
+    grass: 'tipo_erba.png',
+    electric: 'tipo_elettro.png',
+    ice: 'tipo_acqua.png',
+    fighting: 'tipo_lotta.png',
+    poison: 'tipo_psico.png',
+    ground: 'tipo_lotta.png',
+    flying: 'tipo_normale.png',
+    psychic: 'tipo_psico.png',
+    bug: 'tipo_erba.png',
+    rock: 'tipo_lotta.png',
+    ghost: 'tipo_psico.png',
+    dragon: 'tipo_drago.png',
+    dark: 'tipo_buio.png',
+    steel: 'tipo_acciaio.png',
+    fairy: 'tipo_folletto.png',
+    normal: 'tipo_normale.png'
+  };
+  
+  typeIconElement.src = `icon_types/${typeToCardMap[type]}`;
 }
-
-
 
 function catchPokemon() {
-    const name = currentPokemon.name;
-    const id = currentPokemon.id;
+  const name = currentPokemon.name;
+  const id = currentPokemon.id;
 
-    if (name && id) {
-        const alreadyCaught = myPokemonList.find(p => p.id === id);
-        if (!alreadyCaught) {
-            const typeElement = document.getElementById('pokemonTypeIcon');
+  if (name && id) {
+    const alreadyCaught = myPokemonList.find(p => p.id === id);
+    if (!alreadyCaught) {
+      const typeElement = document.getElementById('pokemonTypeIcon');
 
-            myPokemonList.push({ 
-                id, 
-                name, 
-                sprite: currentPokemon.sprite,  //prima non veniva presa l'immagine originale perchè i vecchi pokemon già catturati avevano ancora la gif, mentre ormai quelli nuovi no
-                type: typeElement.src //in questo modo accedi direttamente alla source dal DOMx 
-            });
+      myPokemonList.push({ 
+        id, 
+        name, 
+        sprite: currentPokemon.sprite,
+        type: typeElement.src 
+      });
 
-            localStorage.setItem('myPokemon', JSON.stringify(myPokemonList));
-            renderPaginatedPokemon(0);
-        }
+      localStorage.setItem('myPokemon', JSON.stringify(myPokemonList));
+      renderPaginatedPokemon(0);
     }
+  }
 
-    if (myPokemonList.length > 0) {
-        showDetails(myPokemonList[0].id, 0);
-    } else {
-        detailsDiv.innerHTML = '<p>No Pokemon selected</p>';
-    }
+  if (myPokemonList.length > 0) {
+    showDetails(myPokemonList[0].id, 0);
+  } else {
+    detailsDiv.innerHTML = '<p>No Pokemon selected</p>';
+  }
 
-    fetchRandomPokemon();
+  fetchRandomPokemon();
 }
-
-
-
 
 
 let currentPage = 0;
