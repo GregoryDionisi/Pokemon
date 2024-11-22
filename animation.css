@@ -8,6 +8,45 @@
 }
 
 
+.sprite.megaball {
+  background-position: -40px 0;
+}
+
+.sprite.ultraball {
+  background-position: -120px 0;
+}
+
+.sprite.masterball {
+  background-position: -160px 0;
+}
+
+
+
+#pokeballButtons button {
+  border: 2px solid transparent; /*inizialmente il bordo è trasparente */
+  transition: all 0.3s ease;
+}
+
+/*bordo bianco per la poké ball di default */
+#pokeBallBtn {
+  border: 2px solid white;
+}
+
+
+#pokeballButtons button.active {
+  border: 2px solid white;
+}
+
+
+#pokeballButtons button:focus {
+  outline: none; /*rimuove il bordo predefinito */
+  border: 2px solid white;
+}
+
+
+
+
+
 @-webkit-keyframes bounce-shadow {
   0%, 100% {
     opacity: 0.4;

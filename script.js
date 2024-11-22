@@ -32,6 +32,54 @@ async function fetchRandomPokemon() {
 }
   
   
+document.getElementById("pokeballButtons").addEventListener("click", function (e) {
+    const spriteElement = document.querySelector(".ball .sprite"); //seleziona l'elemento "sprite" all'interno di ".ball"
+    
+    if (e.target.tagName === "BUTTON") { // Verifica che sia stato cliccato un pulsante
+      switch (e.target.id) {
+        case "pokeBallBtn":
+          spriteElement.className = "sprite pokeball";
+          break;
+        case "megaBallBtn":
+          spriteElement.className = "sprite megaball";
+          break;
+        case "ultraBallBtn":
+          spriteElement.className = "sprite ultraball"; 
+          break;
+        case "masterBallBtn":
+          spriteElement.className = "sprite masterball"; 
+          break;
+        default:
+          break;
+      }
+    }
+  });
+
+const pokeballButtons = document.querySelectorAll('#pokeballButtons button');
+const catchButton = document.getElementById('catchButton');
+
+// Funzione per cambiare lo stato attivo dei pulsanti
+pokeballButtons.forEach(button => {
+  button.addEventListener('click', function() {
+    // Rimuovi la classe 'active' da tutti i pulsanti
+    pokeballButtons.forEach(btn => btn.classList.remove('active'));
+    
+    // Aggiungi la classe 'active' al pulsante cliccato
+    this.classList.add('active');
+  });
+});
+
+
+catchButton.addEventListener('click', function() {
+  // Quando si preme "Catch", i bordi sui pulsanti non devono essere influenzati
+});
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  const pokeBallBtn = document.getElementById('pokeBallBtn');
+  pokeBallBtn.classList.add('active');
+});
+
   
   
 

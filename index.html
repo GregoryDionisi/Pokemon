@@ -123,15 +123,30 @@ transition-all duration-300">
 
             <!-- Item 3 - Bottom Center -->
             <div class="col-span-2 md:col-span-4 row-span-1 md:row-span-2 md:col-start-3 md:row-start-4
-                        bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-5
-                        shadow-lg shadow-black/10 text-white/80 
-                        hover:bg-neutral-900/70 hover:border-yellow-500/50 hover:shadow-yellow-500/20
-                        transition-all duration-300
-                        flex flex-col gap-2">
-                <button id="catchButton" class="btn btn-success mt-4">Catch</button>
-                <div id="pokeballButtons">
-                </div>
-            </div>
+            bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-5
+            shadow-lg shadow-black/10 text-white/80 
+            hover:bg-neutral-900/70 hover:border-yellow-500/50 hover:shadow-yellow-500/20
+            transition-all duration-300
+            flex flex-col gap-2">
+
+    <button id="catchButton" class="btn btn-success mt-4">Catch</button>
+
+    <div id="pokeballButtons" class="flex flex-row justify-between gap-2 mt-2">
+        <button id="pokeBallBtn" class="flex-1 px-3 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors duration-200">
+            Poké Ball
+        </button>
+        <button id="megaBallBtn" class="flex-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors duration-200">
+            Mega Ball
+        </button>
+        <button id="ultraBallBtn" class="flex-1 px-3 py-2 bg-yellow-600 hover:bg-yellow-700 rounded-lg transition-colors duration-200">
+            Ultra Ball
+        </button>
+        <button id="masterBallBtn" class="flex-1 px-3 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors duration-200">
+            Master Ball
+        </button>
+    </div>
+</div>
+
 
             <!-- Item 4 - Bottom Left -->
             <div class="col-span-1 md:col-span-2 row-span-1 md:col-start-1 md:row-start-5
