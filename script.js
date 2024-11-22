@@ -5,121 +5,240 @@ const myPokemonDiv = document.getElementById('myPokemonList');
 const detailsDiv = document.getElementById('details');
 let currentDetailIndex = 0;
 
-document.getElementById('catchButton').addEventListener('click', catchPokemon);
-
-const maxPokemonId = 682; //limite massimo per le gif della cartella showdown
+document.getElementById('catchButton').addEventListener('click', () => {
+    startAnimation();
+  });
 
 async function fetchRandomPokemon() {
-    // Genera un ID casuale tra 1 e maxPokemonId
-    const randomId = Math.floor(Math.random() * maxPokemonId) + 1;
-
+    const randomId = Math.floor(Math.random() * 1008) + 1;
+  
     try {
         const response = await fetch(`${API_URL}${randomId}`);
         if (!response.ok) {
             throw new Error('Failed to fetch Pokémon');
         }
         const data = await response.json();
+  
+        data.sprite = data.id > 682 
+            ? data.sprites.front_default
+            : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${data.id}.gif`;
+  
         displayPokemon(data);
+        return data;
+  
     } catch (error) {
         console.error(error);
     }
 }
+  
+  
+document.getElementById("pokeballButtons").addEventListener("click", function (e) {
+    const spriteElement = document.querySelector(".ball .sprite"); //seleziona l'elemento "sprite" all'interno di ".ball"
+    
+    if (e.target.tagName === "BUTTON") { // Verifica che sia stato cliccato un pulsante
+      switch (e.target.id) {
+        case "pokeBallBtn":
+          spriteElement.className = "sprite pokeball";
+          break;
+        case "megaBallBtn":
+          spriteElement.className = "sprite megaball";
+          break;
+        case "ultraBallBtn":
+          spriteElement.className = "sprite ultraball"; 
+          break;
+        case "masterBallBtn":
+          spriteElement.className = "sprite masterball"; 
+          break;
+        default:
+          break;
+      }
+    }
+  });
 
-function displayPokemon(data) {
-    // Funzione per visualizzare i dettagli del Pokémon
-    const pokemonCard = document.createElement('div');
-    pokemonCard.classList.add('pokemon-card');
-    pokemonCard.innerHTML = `
-        <img src="${data.sprites.front_default}" alt="${data.name}" />
-        <h3>${data.name}</h3>
-        <p>Type: ${data.types.map(type => type.type.name).join(', ')}</p>
-        <p>Height: ${data.height}</p>
-        <p>Weight: ${data.weight}</p>
-    `;
+const pokeballButtons = document.querySelectorAll('#pokeballButtons button');
+const catchButton = document.getElementById('catchButton');
 
-    pokemonDisplay.appendChild(pokemonCard);
-}
+// Funzione per cambiare lo stato attivo dei pulsanti
+pokeballButtons.forEach(button => {
+  button.addEventListener('click', function() {
+    // Rimuovi la classe 'active' da tutti i pulsanti
+    pokeballButtons.forEach(btn => btn.classList.remove('active'));
+    
+    // Aggiungi la classe 'active' al pulsante cliccato
+    this.classList.add('active');
+  });
+});
 
+
+catchButton.addEventListener('click', function() {
+  // Quando si preme "Catch", i bordi sui pulsanti non devono essere influenzati
+});
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  const pokeBallBtn = document.getElementById('pokeBallBtn');
+  pokeBallBtn.classList.add('active');
+});
+
+  
+  
 
 let currentPokemon = {};
 
 function displayPokemon(pokemon) {
-    const imgElement = document.getElementById('pokemonSprite');
-
-    imgElement.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${pokemon.id}.gif`; // GIF
-    imgElement.style.display = 'block';
-
     const nameElement = document.getElementById('pokemonName');
     nameElement.textContent = pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
-
+  
     updateTypeIcon(pokemon.types[0].type.name);
-
+  
+    document.getElementById('app').style.setProperty('--poke1', `url(${pokemon.sprite})`);
+  
     currentPokemon = {
-        name: pokemon.name,
-        id: pokemon.id,
-        type: pokemon.types[0].type.name,
-        sprite: pokemon.sprites.front_default
+      name: pokemon.name,
+      id: pokemon.id,
+      type: pokemon.types[0].type.name,
+      sprite: pokemon.sprites.front_default
     };
 }
 
 
 function updateTypeIcon(type) {
-    const typeIconElement = document.getElementById('pokemonTypeIcon');
+  const typeIconElement = document.getElementById('pokemonTypeIcon');
 
-    const typeToCardMap = {
-        fire: 'tipo_fuoco.png',         // Fuoco
-        water: 'tipo_acqua.png',        // Acqua
-        grass: 'tipo_erba.png',         // Erba
-        electric: 'tipo_elettro.png',   // Elettro
-        ice: 'tipo_acqua.png',          // Ghiaccio -> Acqua
-        fighting: 'tipo_lotta.png',     // Lotta
-        poison: 'tipo_psico.png',       // Veleno -> Psico
-        ground: 'tipo_lotta.png',       // Terra -> Lotta
-        flying: 'tipo_normale.png',    // Volante -> Normale
-        psychic: 'tipo_psico.png',      // Psico
-        bug: 'tipo_erba.png',           // Insetto -> Erba
-        rock: 'tipo_lotta.png',         // Roccia -> Lotta
-        ghost: 'tipo_psico.png',        // Spettro -> Psico
-        dragon: 'tipo_drago.png',       // Drago
-        dark: 'tipo_buio.png',          // Buio
-        steel: 'tipo_acciao.png',      // Acciaio
-        fairy: 'tipo_folletto.png',     // Folletto
-        normal: 'tipo_normale.png'     // Normale -> Normale
-    };
-    
-    typeIconElement.src = `icon_types/${typeToCardMap[type]}`;
+  const typeToCardMap = {
+    fire: 'tipo_fuoco.png',
+    water: 'tipo_acqua.png',
+    grass: 'tipo_erba.png',
+    electric: 'tipo_elettro.png',
+    ice: 'tipo_acqua.png',
+    fighting: 'tipo_lotta.png',
+    poison: 'tipo_psico.png',
+    ground: 'tipo_lotta.png',
+    flying: 'tipo_normale.png',
+    psychic: 'tipo_psico.png',
+    bug: 'tipo_erba.png',
+    rock: 'tipo_lotta.png',
+    ghost: 'tipo_psico.png',
+    dragon: 'tipo_drago.png',
+    dark: 'tipo_buio.png',
+    steel: 'tipo_acciaio.png',
+    fairy: 'tipo_folletto.png',
+    normal: 'tipo_normale.png'
+  };
+  
+  typeIconElement.src = `icon_types/${typeToCardMap[type]}`;
 }
-
-
 
 function catchPokemon() {
     const name = currentPokemon.name;
     const id = currentPokemon.id;
-
+  
     if (name && id) {
-        const alreadyCaught = myPokemonList.find(p => p.id === id);
-        if (!alreadyCaught) {
-            myPokemonList.push({ 
-                id, 
-                name, 
-                sprite: currentPokemon.sprite //prima non veniva presa l'immagine originale perchè i vecchi pokemon già catturati avevano ancora la gif, mentre ormai quelli nuovi no
-            });
-            localStorage.setItem('myPokemon', JSON.stringify(myPokemonList));
-            renderPaginatedPokemon(0);
-        }
-    }
+      const alreadyCaught = myPokemonList.find(p => p.id === id);
+      if (!alreadyCaught) {
+        const typeElement = document.getElementById('pokemonTypeIcon');
+  
+        myPokemonList.push({ 
+          id, 
+          name, 
+          sprite: currentPokemon.sprite,
+          type: typeElement.src 
+        });
+  
+        localStorage.setItem('myPokemon', JSON.stringify(myPokemonList));
 
-    if (myPokemonList.length > 0) {
-        showDetails(myPokemonList[0].id, 0);
-    } else {
-        detailsDiv.innerHTML = '<p>No Pokemon selected</p>';
+        $(".pkmn").addClass("exit");
+        setTimeout(() => {
+          renderPaginatedPokemon(0);
+        }, 2000);
+  
+        setTimeout(() => {
+          $(".pkmn").removeClass("exit");
+          fetchRandomPokemon();
+        }, 4000);
+      }
     }
+  }
+  
+  const startAnimation = () => {
+      catchPokemon();
+  };
 
-    fetchRandomPokemon();
+
+
+
+
+function renderPaginatedPokemon(page) {
+    currentPage = page;
+    //Non c'è più un limite di carte per pagina, quindi mostriamo tutti i Pokémon
+    const paginatedPokemon = myPokemonList; //Viene usato direttamente tutta la lista dei pokemon senza suddividerli in pagine
+
+    myPokemonDiv.innerHTML = '';
+    paginatedPokemon.forEach((pokemon, index) => {
+        const pokemonCard = document.createElement('div');
+        pokemonCard.classList.add(
+            'bg-gradient-to-br',
+            'from-gray-800',
+            'to-gray-900',
+            'backdrop-blur-lg',
+            'shadow-xl',
+            'rounded-xl',
+            'w-full',
+            'max-w-xs',
+            'flex',
+            'flex-col',
+            'items-center',
+            'p-4',
+            'border',
+            'border-gray-700',
+            'hover:border-blue-500/50',
+            'transform',
+            'transition-all',
+            'duration-300',
+            'hover:scale-105',
+            'hover:shadow-blue-500/10',
+            'hover:shadow-lg',
+            'animate-fade-in'
+        );
+        pokemonCard.style.animationDelay = `${index * 100}ms`;
+
+        pokemonCard.innerHTML = `
+            <div class="relative w-full">
+                <span class="absolute top-0 right-0 px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm">
+                    #${pokemon.id}
+                </span>
+                <img src="${pokemon.sprite}" alt="${pokemon.name}" 
+                     class="w-32 h-32 object-contain mx-auto transition-transform duration-300 hover:scale-110">
+            </div>
+            <div class="flex justify-center items-center space-x-4">
+            <p class="text-xl font-bold text-white capitalize mt-4 mb-4">${pokemon.name}</p>
+            <img src="${pokemon.type}" class="w-8 h-8">
+            </div>
+            <div class="flex gap-2 w-full justify-center">
+                <button onclick="showDetails(${pokemon.id})" 
+                    class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 
+                           transition-colors duration-300 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                        <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                    </svg>
+                    Details
+                </button>
+                <button onclick="removePokemon(${pokemon.id})" 
+                    class="bg-red-500/20 text-red-300 px-4 py-2 rounded-lg hover:bg-red-500/30 
+                           transition-colors duration-300 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                    Remove
+                </button>
+            </div>
+        `;
+        myPokemonDiv.appendChild(pokemonCard);
+    });
+
+    updatePaginationButtons();
 }
-
-
-
 
 
 let currentPage = 0;
@@ -227,10 +346,9 @@ function sortPokemonAlphabetically() {
 document.getElementById('removeAllButton').addEventListener('click', removeAllPokemon);
 document.getElementById('sortButton').addEventListener('click', sortPokemonAlphabetically);
 
-// Initialize the app
+//Inizializza la web app
 renderPaginatedPokemon(0);
 fetchRandomPokemon();
-
 
 
 
@@ -323,75 +441,6 @@ function displayDetails(pokemon) {   //OPZIONE 1 PER LA VISUALIZZAZIONE DEI DETT
             </div>
         </div>
     `;
-}
-
-function renderPaginatedPokemon(page) {
-    currentPage = page;
-    //Non c'è più un limite di carte per pagina, quindi mostriamo tutti i Pokémon
-    const paginatedPokemon = myPokemonList; //Viene usato direttamente tutta la lista dei pokemon senza suddividerli in pagine
-
-    myPokemonDiv.innerHTML = '';
-    paginatedPokemon.forEach((pokemon, index) => {
-        const pokemonCard = document.createElement('div');
-        pokemonCard.classList.add(
-            'bg-gradient-to-br',
-            'from-gray-800',
-            'to-gray-900',
-            'backdrop-blur-lg',
-            'shadow-xl',
-            'rounded-xl',
-            'w-full',
-            'max-w-xs',
-            'flex',
-            'flex-col',
-            'items-center',
-            'p-4',
-            'border',
-            'border-gray-700',
-            'hover:border-blue-500/50',
-            'transform',
-            'transition-all',
-            'duration-300',
-            'hover:scale-105',
-            'hover:shadow-blue-500/10',
-            'hover:shadow-lg',
-            'animate-fade-in'
-        );
-        pokemonCard.style.animationDelay = `${index * 100}ms`;
-
-        pokemonCard.innerHTML = `
-            <div class="relative w-full">
-                <span class="absolute top-0 right-0 px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm">
-                    #${pokemon.id}
-                </span>
-                <img src="${pokemon.sprite}" alt="${pokemon.name}" 
-                     class="w-32 h-32 object-contain mx-auto transition-transform duration-300 hover:scale-110">
-            </div>
-            <p class="text-xl font-bold text-white capitalize mt-4 mb-6">${pokemon.name}</p>
-            <div class="flex gap-2 w-full justify-center">
-                <button onclick="showDetails(${pokemon.id})" 
-                    class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 
-                           transition-colors duration-300 flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                        <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
-                    </svg>
-                    Details
-                </button>
-                <button onclick="removePokemon(${pokemon.id})" 
-                    class="bg-red-500/20 text-red-300 px-4 py-2 rounded-lg hover:bg-red-500/30 
-                           transition-colors duration-300 flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-                    </svg>
-                    Remove
-                </button>
-            </div>
-        `;
-        myPokemonDiv.appendChild(pokemonCard);
-    });
-
-    updatePaginationButtons();
 }
 
 
