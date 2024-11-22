@@ -5,64 +5,31 @@ const myPokemonDiv = document.getElementById('myPokemonList');
 const detailsDiv = document.getElementById('details');
 let currentDetailIndex = 0;
 
-document.getElementById('catchButton').addEventListener('click', catchPokemon);
 document.getElementById('catchButton').addEventListener('click', () => {
     startAnimation();
   });
-const pokemon = document.querySelector('.pkmn');
 
-const startAnimation = () => {
-    const pkmn = $(".pkmn");  
-    pkmn.removeClass("exit");
-  
-    setTimeout(() => {
-      // Ottieni un Pokémon casuale dalla PokéAPI e aggiorna l'animazione
-      fetchRandomPokemon().then((data) => {
-        // Passa direttamente i dati a displayPokemon senza creare una costante `poke1`
-        $("#app").attr("style", `
-          --poke1:url(${data.sprite});
-        `);
-  
-        // Aggiungi la classe 'exit' per far partire l'animazione
-        pkmn.addClass("exit");
-      });
-    }, 100);
-  };
-  
-  $("#catchButton").on("click", startAnimation);
-  
-  $("input").on("change", (e) => {
-    if ($(e.currentTarget).is(":checked")) {
-      $("body").attr(`style`, `--slowmo: 5s; --slowsplode: 2s`);
-    } else {
-      $("body").attr("style", "");
-    }
-  });
-  
-  // Funzione per ottenere un Pokémon casuale dalla PokéAPI
-  async function fetchRandomPokemon() {
-    const randomId = Math.floor(Math.random() * 1008) + 1; // Ottieni un ID Pokémon casuale tra 1 e 1008
+async function fetchRandomPokemon() {
+    const randomId = Math.floor(Math.random() * 1008) + 1;
   
     try {
-      const response = await fetch(`${API_URL}${randomId}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch Pokémon');
-      }
-      const data = await response.json();
+        const response = await fetch(`${API_URL}${randomId}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch Pokémon');
+        }
+        const data = await response.json();
   
-      // Recupera lo sprite e i dettagli del Pokémon
-      data.sprite = data.id > 682 
-        ? data.sprites.front_default
-        : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${data.id}.gif`;
+        data.sprite = data.id > 682 
+            ? data.sprites.front_default
+            : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${data.id}.gif`;
   
-      // Passa direttamente i dati a displayPokemon
-      displayPokemon(data);
-      return data; // opzionale, ma restituisce comunque il dato per eventuali usi futuri
+        displayPokemon(data);
+        return data;
   
     } catch (error) {
-      console.error(error);
+        console.error(error);
     }
-  }
+}
   
   
   
@@ -71,18 +38,21 @@ const startAnimation = () => {
 let currentPokemon = {};
 
 function displayPokemon(pokemon) {
-  const nameElement = document.getElementById('pokemonName');
-  nameElement.textContent = pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
-
-  updateTypeIcon(pokemon.types[0].type.name);
-
-  currentPokemon = {
-    name: pokemon.name,
-    id: pokemon.id,
-    type: pokemon.types[0].type.name,
-    sprite: pokemon.sprites.front_default
-};
+    const nameElement = document.getElementById('pokemonName');
+    nameElement.textContent = pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
+  
+    updateTypeIcon(pokemon.types[0].type.name);
+  
+    document.getElementById('app').style.setProperty('--poke1', `url(${pokemon.sprite})`);
+  
+    currentPokemon = {
+      name: pokemon.name,
+      id: pokemon.id,
+      type: pokemon.types[0].type.name,
+      sprite: pokemon.sprites.front_default
+    };
 }
+
 
 function updateTypeIcon(type) {
   const typeIconElement = document.getElementById('pokemonTypeIcon');
@@ -112,33 +82,114 @@ function updateTypeIcon(type) {
 }
 
 function catchPokemon() {
-  const name = currentPokemon.name;
-  const id = currentPokemon.id;
+    const name = currentPokemon.name;
+    const id = currentPokemon.id;
+  
+    if (name && id) {
+      const alreadyCaught = myPokemonList.find(p => p.id === id);
+      if (!alreadyCaught) {
+        const typeElement = document.getElementById('pokemonTypeIcon');
+  
+        myPokemonList.push({ 
+          id, 
+          name, 
+          sprite: currentPokemon.sprite,
+          type: typeElement.src 
+        });
+  
+        localStorage.setItem('myPokemon', JSON.stringify(myPokemonList));
 
-  if (name && id) {
-    const alreadyCaught = myPokemonList.find(p => p.id === id);
-    if (!alreadyCaught) {
-      const typeElement = document.getElementById('pokemonTypeIcon');
-
-      myPokemonList.push({ 
-        id, 
-        name, 
-        sprite: currentPokemon.sprite,
-        type: typeElement.src 
-      });
-
-      localStorage.setItem('myPokemon', JSON.stringify(myPokemonList));
-      renderPaginatedPokemon(0);
+        $(".pkmn").addClass("exit");
+        setTimeout(() => {
+          renderPaginatedPokemon(0);
+        }, 2000);
+  
+        setTimeout(() => {
+          $(".pkmn").removeClass("exit");
+          fetchRandomPokemon();
+        }, 4000);
+      }
     }
   }
+  
+  const startAnimation = () => {
+      catchPokemon();
+  };
 
-  if (myPokemonList.length > 0) {
-    showDetails(myPokemonList[0].id, 0);
-  } else {
-    detailsDiv.innerHTML = '<p>No Pokemon selected</p>';
-  }
 
-  fetchRandomPokemon();
+
+
+
+function renderPaginatedPokemon(page) {
+    currentPage = page;
+    //Non c'è più un limite di carte per pagina, quindi mostriamo tutti i Pokémon
+    const paginatedPokemon = myPokemonList; //Viene usato direttamente tutta la lista dei pokemon senza suddividerli in pagine
+
+    myPokemonDiv.innerHTML = '';
+    paginatedPokemon.forEach((pokemon, index) => {
+        const pokemonCard = document.createElement('div');
+        pokemonCard.classList.add(
+            'bg-gradient-to-br',
+            'from-gray-800',
+            'to-gray-900',
+            'backdrop-blur-lg',
+            'shadow-xl',
+            'rounded-xl',
+            'w-full',
+            'max-w-xs',
+            'flex',
+            'flex-col',
+            'items-center',
+            'p-4',
+            'border',
+            'border-gray-700',
+            'hover:border-blue-500/50',
+            'transform',
+            'transition-all',
+            'duration-300',
+            'hover:scale-105',
+            'hover:shadow-blue-500/10',
+            'hover:shadow-lg',
+            'animate-fade-in'
+        );
+        pokemonCard.style.animationDelay = `${index * 100}ms`;
+
+        pokemonCard.innerHTML = `
+            <div class="relative w-full">
+                <span class="absolute top-0 right-0 px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm">
+                    #${pokemon.id}
+                </span>
+                <img src="${pokemon.sprite}" alt="${pokemon.name}" 
+                     class="w-32 h-32 object-contain mx-auto transition-transform duration-300 hover:scale-110">
+            </div>
+            <div class="flex justify-center items-center space-x-4">
+            <p class="text-xl font-bold text-white capitalize mt-4 mb-4">${pokemon.name}</p>
+            <img src="${pokemon.type}" class="w-8 h-8">
+            </div>
+            <div class="flex gap-2 w-full justify-center">
+                <button onclick="showDetails(${pokemon.id})" 
+                    class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 
+                           transition-colors duration-300 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                        <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                    </svg>
+                    Details
+                </button>
+                <button onclick="removePokemon(${pokemon.id})" 
+                    class="bg-red-500/20 text-red-300 px-4 py-2 rounded-lg hover:bg-red-500/30 
+                           transition-colors duration-300 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                    Remove
+                </button>
+            </div>
+        `;
+        myPokemonDiv.appendChild(pokemonCard);
+    });
+
+    updatePaginationButtons();
 }
 
 
@@ -250,8 +301,6 @@ document.getElementById('sortButton').addEventListener('click', sortPokemonAlpha
 //Inizializza la web app
 renderPaginatedPokemon(0);
 fetchRandomPokemon();
-startAnimation(); //aggiunta della funzione in modo che parta subito l'animazione e risolvere il problema della pokeball vuota
-
 
 
 
@@ -344,78 +393,6 @@ function displayDetails(pokemon) {   //OPZIONE 1 PER LA VISUALIZZAZIONE DEI DETT
             </div>
         </div>
     `;
-}
-
-function renderPaginatedPokemon(page) {
-    currentPage = page;
-    //Non c'è più un limite di carte per pagina, quindi mostriamo tutti i Pokémon
-    const paginatedPokemon = myPokemonList; //Viene usato direttamente tutta la lista dei pokemon senza suddividerli in pagine
-
-    myPokemonDiv.innerHTML = '';
-    paginatedPokemon.forEach((pokemon, index) => {
-        const pokemonCard = document.createElement('div');
-        pokemonCard.classList.add(
-            'bg-gradient-to-br',
-            'from-gray-800',
-            'to-gray-900',
-            'backdrop-blur-lg',
-            'shadow-xl',
-            'rounded-xl',
-            'w-full',
-            'max-w-xs',
-            'flex',
-            'flex-col',
-            'items-center',
-            'p-4',
-            'border',
-            'border-gray-700',
-            'hover:border-blue-500/50',
-            'transform',
-            'transition-all',
-            'duration-300',
-            'hover:scale-105',
-            'hover:shadow-blue-500/10',
-            'hover:shadow-lg',
-            'animate-fade-in'
-        );
-        pokemonCard.style.animationDelay = `${index * 100}ms`;
-
-        pokemonCard.innerHTML = `
-            <div class="relative w-full">
-                <span class="absolute top-0 right-0 px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm">
-                    #${pokemon.id}
-                </span>
-                <img src="${pokemon.sprite}" alt="${pokemon.name}" 
-                     class="w-32 h-32 object-contain mx-auto transition-transform duration-300 hover:scale-110">
-            </div>
-            <div class="flex justify-center items-center space-x-4">
-            <p class="text-xl font-bold text-white capitalize mt-4 mb-4">${pokemon.name}</p>
-            <img src="${pokemon.type}" class="w-8 h-8">
-            </div>
-            <div class="flex gap-2 w-full justify-center">
-                <button onclick="showDetails(${pokemon.id})" 
-                    class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 
-                           transition-colors duration-300 flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                        <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
-                    </svg>
-                    Details
-                </button>
-                <button onclick="removePokemon(${pokemon.id})" 
-                    class="bg-red-500/20 text-red-300 px-4 py-2 rounded-lg hover:bg-red-500/30 
-                           transition-colors duration-300 flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-                    </svg>
-                    Remove
-                </button>
-            </div>
-        `;
-        myPokemonDiv.appendChild(pokemonCard);
-    });
-
-    updatePaginationButtons();
 }
 
 
