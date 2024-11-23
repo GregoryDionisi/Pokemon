@@ -735,7 +735,6 @@ body, html {
   font-family: "pkmn", monospace;
   text-align: center;
   font-size: 14px;
-  text-shadow: 0 0.15em 0 #000a;
 }
 
 * {
@@ -758,10 +757,30 @@ p:last-child {
   line-height: 1.4;
 }
 
+
 @font-face {
   font-family: "pkmn";
   font-style: normal;
   font-weight: 400;
   font-display: swap;
   src: url("https://assets.codepen.io/13471/Pokemon-DPPt.woff2") format("woff2"), url("https://assets.codepen.io/13471/pokemon-DPPt.woff") format("woff");
+}
+
+@font-face {
+  font-family: 'PokemonTCG';
+  src: url('./font/gill-sans/Gill\ Sans\ Bold.otf') format('truetype');
+}
+
+.pokemon-font {
+  font-family: 'PokemonTCG', 'Gill Sans', 'Futura', sans-serif;
+  font-weight: bold;
+  letter-spacing: 0.05em; 
+}
+
+.text-outline-white {
+  text-shadow: 
+      -1px -1px 0 #fff,
+      1px -1px 0 #fff, 
+      -1px 1px 0 #fff,  
+      1px 1px 0 #fff;   
 }
