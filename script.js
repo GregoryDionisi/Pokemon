@@ -527,11 +527,9 @@ function displayCardDetails(pokemon){
             infoDiv.innerHTML = `
                 <div class="relative w-full h-full">
                     <!-- Header container con nome e HP -->
-                    <div class="absolute top-[4%] left-0 w-full px-[13%] pokemon-font">
+                    <div class="absolute top-[4%] left-5 w-full px-[20%] pokemon-font">
                         <div class="flex justify-between items-center">
                             <div class="flex items-center gap-2">
-                                <!-- Cerchio grigio (stage) -->
-                                <div class="w-[1.5vw] h-[1.5vw] bg-gray-300 rounded-full"></div>
                                 <!-- Nome Pokemon -->
                                 <span class="text-[1.2vw] font-bold capitalize text-black text-outline-white">
                                     ${pokemon.name}
