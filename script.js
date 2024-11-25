@@ -282,18 +282,6 @@ function renderPaginatedPokemon(page) {
 
 let currentPage = 0;
 
-function updatePaginationButtons() {
-    const previousButton = document.getElementById('previousButton');
-    const nextButton = document.getElementById('nextButton');
-
-    previousButton.disabled = currentPage === 0;
-    nextButton.disabled = currentPage >= Math.ceil(myPokemonList.length / cardsPerPage) - 1;
-
-    // Also update navigation buttons for details
-    previousButton.disabled = currentDetailIndex === 0;
-    nextButton.disabled = currentDetailIndex >= myPokemonList.length - 1;
-}
-
 async function showDetails(id, index = null) {
     if (index !== null) {
         currentDetailIndex = index;
@@ -543,7 +531,7 @@ function displayCardDetails(pokemon){
                     </div>
         
                     <!-- Container info base -->
-                    <div class="absolute bottom-[6%] right-[15%] flex flex-col items-end pokemon-font">
+                    <div class="absolute bottom-[2%] right-[15%] flex flex-col items-end pokemon-font">
                         <div class="stats-container text-[0.8vw] text-black">
                             <div class="flex gap-1">
                                 <span class="text-outline-white">Altezza:</span>
