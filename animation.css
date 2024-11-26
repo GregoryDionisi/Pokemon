@@ -133,17 +133,15 @@
           animation-name: mon-poof-2;
 }
 
-.pkmn.left .mon {
-  transform: scaleX(-1);
-}
 
 .pkmn.right .mon {
-  transform: scaleX(1);
+  transform: scale(2,2);
+  right: 15%
 }
 
 .pkmn.right .ball {
   transform: scaleX(-1);
-  left: 63%;
+  left: 80%;
 }
 
 @keyframes mon-poof {
@@ -784,3 +782,4 @@ p:last-child {
       -1px 1px 0 #fff,  
       1px 1px 0 #fff;   
 }
+

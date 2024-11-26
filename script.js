@@ -80,20 +80,20 @@ function attemptCatch() {
 const pokeballButtons = document.querySelectorAll('#pokeballButtons button');
 const catchButton = document.getElementById('catchButton');
 
-// Funzione per cambiare lo stato attivo dei pulsanti
+//funzione per cambiare lo stato attivo dei pulsanti
 pokeballButtons.forEach(button => {
   button.addEventListener('click', function() {
-    // Rimuovi la classe 'active' da tutti i pulsanti
+    //rimuovi la classe 'active' da tutti i pulsanti
     pokeballButtons.forEach(btn => btn.classList.remove('active'));
     
-    // Aggiungi la classe 'active' al pulsante cliccato
+    //aggiungi la classe 'active' al pulsante cliccato
     this.classList.add('active');
   });
 });
 
 
 catchButton.addEventListener('click', function() {
-  // Quando si preme "Catch", i bordi sui pulsanti non devono essere influenzati
+  //quando si preme "Catch", i bordi sui pulsanti non devono essere influenzati
 });
 
 
@@ -154,23 +154,19 @@ function updateTypeIcon(type) {
 async function catchPokemon() {
     const name = currentPokemon.name;
     const id = currentPokemon.id;
-  
+
     if (name && id) {
         const alreadyCaught = myPokemonList.find(p => p.id === id);
         if (alreadyCaught) {
-            // Se il Pokemon è già stato catturato
             alert(`${name.charAt(0).toUpperCase() + name.slice(1)} è già presente nel tuo Pokedex!`);
-            // Genera un nuovo pokemon immediatamente
-            fetchRandomPokemon();
-            return; // Esce dalla funzione
+            fetchRandomPokemon();  //genera un nuovo pokemon
+            return; 
         }
 
         $(".pkmn").addClass("exit");
         
-        //dopo 2 secondi totali, che è la durata dell'animazione, verifica il risultato
         setTimeout(() => {
             if (attemptCatch()) {
-                //cattura riuscita
                 const typeElement = document.getElementById('pokemonTypeIcon');
                 
                 myPokemonList.push({ 
@@ -184,13 +180,11 @@ async function catchPokemon() {
                 
                 renderPaginatedPokemon(0);
                 
-                //genera nuovo pokemon dopo altri 2 secondi
                 setTimeout(() => {
                     $(".pkmn").removeClass("exit");
                     fetchRandomPokemon();
                 }, 2000);
             } else {
-                //cattura fallita
                 const capitalizedPokeball = currentPokeball.charAt(0).toUpperCase() + currentPokeball.slice(1);
                 alert(`${name.charAt(0).toUpperCase() + name.slice(1)} è uscito dalla ${capitalizedPokeball}! Prova di nuovo!`);
                 $(".pkmn").removeClass("exit");
@@ -200,9 +194,24 @@ async function catchPokemon() {
     }
 }
 
+
 const startAnimation = () => {
-    catchPokemon();
+    //disabilita i bottoni nella sezione item 3
+    const item3Buttons = document.querySelectorAll('#item3Buttons button');
+    item3Buttons.forEach(button => {
+        button.disabled = true;  //disabilita il bottone
+    });
+
+    catchPokemon();  //avvia l'animazione del catch
+
+    //attende che l'animazione finisca per riattivare i bottoni
+    setTimeout(() => {
+        item3Buttons.forEach(button => {
+            button.disabled = false;  //riabilita il bottone
+        });
+    }, 5000);  //riabilita i bottoni dopo 2 secondi (durata dell'animazione)
 };
+
 
 
 
@@ -332,12 +341,12 @@ function removePokemon(id) {
         myPokemonList.splice(index, 1);
         localStorage.setItem('myPokemon', JSON.stringify(myPokemonList));
         
-        // Update currentDetailIndex if necessary
+        
         if (currentDetailIndex >= myPokemonList.length) {
             currentDetailIndex = Math.max(0, myPokemonList.length - 1);
         }
         
-        // Show details of another Pokemon if available
+        //mostra i dettagli di un atlro pokemon se è disponibile
         if (myPokemonList.length > 0) {
             showDetails(myPokemonList[currentDetailIndex].id, currentDetailIndex);
         } else {
@@ -351,17 +360,31 @@ function removePokemon(id) {
 function removeAllPokemon() {
     myPokemonList.length = 0;
     localStorage.setItem('myPokemon', JSON.stringify(myPokemonList));
-    detailsDiv.innerHTML = '<p>No Pokemon selected</p>';
+
+    
+    const infoDiv = document.getElementById('cartaDetails');
+
+    if (infoDiv) {
+        //svuota il contenuto e inserisce il messaggio
+        infoDiv.innerHTML = '<p class="text-center text-gray-300">Nessun Pokémon selezionato</p>';
+        console.log('Il contenuto del div è stato aggiornato.');
+    } else {
+        console.log('Il div con ID "cartaDetails" non è stato trovato. Controlla il tuo HTML!');
+    }
+
     currentDetailIndex = 0;
     renderPaginatedPokemon(0);
 }
+
+
+
 
 
 function sortPokemonAlphabetically() {
     myPokemonList.sort((a, b) => a.name.localeCompare(b.name));
     localStorage.setItem('myPokemon', JSON.stringify(myPokemonList));
     
-    // After sorting, maintain the current Pokemon in view but update its index
+    
     if (myPokemonList.length > 0) {
         const currentId = myPokemonList[currentDetailIndex]?.id;
         if (currentId) {
@@ -396,7 +419,7 @@ if (myPokemonList.length > 0) {
 
 
 
-// Add keyboard navigation
+//aggiungi navigazione con tastiera
 document.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowLeft') {
         showPreviousPokemon();
@@ -406,7 +429,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 
-// Aggiorna lo stile dei bottoni di navigazione
+//aggiorna lo stile dei bottoni di navigazione
 function updatePaginationButtons() {
     const previousButton = document.getElementById('previousButton');
     const nextButton = document.getElementById('nextButton');
@@ -421,7 +444,7 @@ function updatePaginationButtons() {
     previousButton.disabled = currentDetailIndex === 0;
     nextButton.disabled = currentDetailIndex >= myPokemonList.length - 1;
 
-    // Aggiorna icone dei bottoni
+    //aggiorna icone dei bottoni
     previousButton.innerHTML = `
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
@@ -437,13 +460,13 @@ function updatePaginationButtons() {
     `;
 }
 
-// Aggiorna lo stile dei bottoni di utility
+//aggiorna lo stile dei bottoni di utility
 document.getElementById('removeAllButton').className = 
     'bg-red-500/20 text-red-300 px-4 py-2 rounded-lg hover:bg-red-500/30 transition-all duration-300 flex items-center gap-2';
 document.getElementById('sortButton').className = 
     'bg-blue-500/20 text-blue-300 px-4 py-2 rounded-lg hover:bg-blue-500/30 transition-all duration-300 flex items-center gap-2';
 
-// Aggiorna lo stile del bottone Catch
+//aggiorna lo stile del bottone Catch
 document.getElementById('catchButton').className = 
     'btn bg-gradient-to-r from-blue-500 to-blue-600 text-white border-none hover:from-blue-600 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-blue-500/20';
 
